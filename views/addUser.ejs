@@ -1,0 +1,63 @@
+<div class="row mt-5 justify-content-md-center">
+    <div class="card-body">
+        <h1 class="text-center mb-3">
+            <i class="fas fa-user-plus"></i> Add New User
+        </h1>
+        <a href="/menu/manage/" class="btn btn-secondary mr-1"><i class="fas fa-users"></i> All Users</a>
+        <a href="/menu/manage/addUser" class="btn btn-secondary disabled"><i class="fas fa-user-plus"></i> Add User</a>
+        <div class="card mt-2" style="width: 20rem;">
+            <div class="card-body">
+                <% include ./partials/messages.ejs %>
+                <form action="/menu/manage/addUserForm" method="POST">
+                    <div class="form-group">
+                        <label for="firstName">First Name</label>
+                        <input
+                                type="text"
+                                id="firstName"
+                                name="firstName"
+                                class="form-control"
+                                placeholder="Enter First Name"
+                        />
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">Last Name</label>
+                        <input
+                                type="text"
+                                id="lastName"
+                                name="lastName"
+                                class="form-control"
+                                placeholder="Enter Last Name"
+                        />
+                    </div>
+                    <div class="form-group">
+                        <label for="username">User Name</label>
+                        <input
+                                type="text"
+                                id="username"
+                                name="username"
+                                class="form-control"
+                                placeholder="Enter User Name"
+                        />
+                    </div>
+                    <div class="form-group">
+                        <label for="timeOut">Session time out (minutes)</label>
+                        <input
+                                type="text"
+                                id="timeOut"
+                                name="timeOut"
+                                class="form-control"
+                                placeholder="Enter session time out"
+                        />
+                    </div>
+
+
+                    <button type="submit" class="btn btn-primary btn-block">
+                        Add
+                    </button>
+                </form>
+            </div>
+        </div>
+        <a href="/menu" class="btn btn-secondary mt-2"><i class="fas fa-undo-alt"></i> Back to menu</a>
+    </div>
+</div>
+

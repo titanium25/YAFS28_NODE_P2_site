@@ -1,0 +1,25 @@
+{
+  "usersData": [
+    {
+      "id": "60db41dcbb98cb542c92ab00",
+      "firstName": "ALEXANDER",
+      "lastName": "Graham",
+      "timeOut": "6575757",
+      "created": "2021-06-29T15:53:00.334Z"
+    },
+    {
+      "id": "60db41e839963415e8ae4bdd",
+      "firstName": "Alex_test",
+      "lastName": "Graham",
+      "timeOut": "70",
+      "created": "2021-06-29T15:53:12.371Z"
+    },
+    {
+      "id": "60db43ba0037a45ee4e3dd2a",
+      "firstName": "Jora",
+      "lastName": "Zdin",
+      "timeOut": "600",
+      "created": "2021-06-29T16:00:58.402Z"
+    }
+  ]
+}
