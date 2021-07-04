@@ -42,7 +42,7 @@
                     <div class="form-group">
                         <label for="timeOut">Session time out (minutes)</label>
                         <input
-                                type="text"
+                                type="number"
                                 id="timeOut"
                                 name="timeOut"
                                 class="form-control"
@@ -50,6 +50,19 @@
                         />
                     </div>
 
+                    <div class="form-group">
+                        <input class="form-group" type="radio" name="isAdmin" id="role1" value="false" checked>
+                        <label class="form-group-label mb-lg-2" for="role1">
+                            User
+                        </label>
+                    </div>
+
+                    <div class="form-group">
+                        <input class="form-group" type="radio" name="isAdmin" id="role2" value="true">
+                        <label class="form-group-label mb-lg-2" for="role2">
+                            Admin
+                        </label>
+                    </div>
 
                     <button type="submit" class="btn btn-primary btn-block">
                         Add

@@ -15,9 +15,25 @@ router.get('/addUser',function(req, res, next) {
 });
 
 // Add User Handler
-router.post('/addUserForm', async function(req, res, next) {
-    await usersBL.addUser(req);
-    req.flash('success_msg', `User ${req.body.firstName} ${req.body.lastName} Added Successfully`);
+router.post('/addUserForm',async function(req, res, next) {
+    let status = await usersBL.addUser(req);
+    req.flash('success_msg', status);
     res.redirect('/menu/manage');
 });
+
+// Edit User Handler
+router.post('/editUserForm',async function(req, res, next) {
+    let status = await usersBL.updateUser(req);
+    req.flash('success_msg', status);
+    res.redirect('/menu/manage');
+});
+
+// Delete User Handler
+router.post('/deleteUserForm',async function(req, res, next) {
+    let status = await usersBL.deleteUser(req.body.userId);
+    req.flash('success_msg', status);
+    res.redirect('/menu/manage');
+});
+
+
 module.exports = router;
