@@ -1,3 +1,15 @@
+<script>
+    function validate() {
+        var remember = document.getElementById("test");
+        if (remember.checked) {
+            alert("checked");
+        } else {
+            alert("You didn't check it! Let me check it for you.");
+        }
+    }
+</script>
+<input class="form-group" type="checkbox" value="true" id="test">
+
 <div class="row mt-5 justify-content-md-center">
     <div class="card-body">
         <h1 class="text-center mb-3">
@@ -5,10 +17,13 @@
         </h1>
         <a href="/menu/manage/" class="btn btn-secondary mr-1"><i class="fas fa-users"></i> All Users</a>
         <a href="/menu/manage/addUser" class="btn btn-secondary disabled"><i class="fas fa-user-plus"></i> Add User</a>
-        <div class="card mt-2" style="width: 20rem;">
+        <!-- Hard coded width -->
+        <div class="card mt-2" style="width: 30rem;">
             <div class="card-body">
                 <% include ./partials/messages.ejs %>
                 <form action="/menu/manage/addUserForm" method="POST">
+                    <div class="row">
+                        <div class="col">
                     <div class="form-group">
                         <label for="firstName">First Name</label>
                         <input
@@ -19,6 +34,8 @@
                                 placeholder="Enter First Name"
                         />
                     </div>
+                        </div>
+                        <div class="col">
                     <div class="form-group">
                         <label for="lastName">Last Name</label>
                         <input
@@ -29,6 +46,10 @@
                                 placeholder="Enter Last Name"
                         />
                     </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
                     <div class="form-group">
                         <label for="username">User Name</label>
                         <input
@@ -39,6 +60,8 @@
                                 placeholder="Enter User Name"
                         />
                     </div>
+                        </div>
+                        <div class="col">
                     <div class="form-group">
                         <label for="timeOut">Session time out (minutes)</label>
                         <input
@@ -49,19 +72,63 @@
                                 placeholder="Enter session time out"
                         />
                     </div>
-
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                <input class="form-group" type="checkbox" value="true" id="vs">
+                                <label for="vs">View Subscriptions</label>
+                            </div>
+                            <div class="form-group">
+                                <input class="form-group" type="checkbox" value="true" id="cs">
+                                <label for="cs">Create Subscriptions</label>
+                            </div>
+                            <div class="form-group">
+                                <input class="form-group" type="checkbox" value="true" id="ds">
+                                <label for="ds">Delete Subscriptions</label>
+                            </div>
+                            <div class="form-group">
+                                <input class="form-group" type="checkbox" value="true" id="us">
+                                <label for="us">Update Subscriptions</label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <input class="form-group" type="checkbox" value="true" id="vm">
+                                <label for="vm">View Movies</label>
+                            </div>
+                            <div class="form-group">
+                                <input class="form-group" type="checkbox" value="true" id="cm">
+                                <label for="cm">Create Movies</label>
+                            </div>
+                            <div class="form-group">
+                                <input class="form-group" type="checkbox" value="true" id="dm">
+                                <label for="dm">Delete Movies</label>
+                            </div>
+                            <div class="form-group">
+                                <input class="form-group" type="checkbox" value="true" id="um">
+                                <label for="um">Update Movies</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
                     <div class="form-group">
                         <input class="form-group" type="radio" name="isAdmin" id="role1" value="false" checked>
                         <label class="form-group-label mb-lg-2" for="role1">
                             User
                         </label>
                     </div>
-
+                        </div>
+                        <div class="col">
                     <div class="form-group">
                         <input class="form-group" type="radio" name="isAdmin" id="role2" value="true">
                         <label class="form-group-label mb-lg-2" for="role2">
                             Admin
                         </label>
+                    </div>
+                        </div>
                     </div>
 
                     <button type="submit" class="btn btn-primary btn-block">

@@ -47,17 +47,23 @@ exports.updateUser = async function (req) {
     let usersJSON = await jsonDAL.getUsers();
     let usersDataArr = usersJSON.usersData;
 
+    let searchForUser = await User.find({username})
+
+
     let errors = [];
 
-    // Check required fields
+    // Check required fields not blank
     if (!firstName || !lastName || !username || !timeOut) {
         errors.push({msg: 'Please dont leave blank fields'});
         return errors;
-    } else {
-        User.findByIdAndUpdate(userId, {
-            username,
-            isAdmin
-        })
+    }
+    // Check if username is unique
+    if (searchForUser.length > 0) {
+        errors.push({msg: 'This username is already exists'});
+        return errors;
+    }
+
+    else {
 
         let findUser = usersDataArr.find(user => user.id == userId)
         let index = usersDataArr.indexOf(findUser)
@@ -66,39 +72,78 @@ exports.updateUser = async function (req) {
         usersDataArr[index].timeOut = timeOut
         await jsonDAL.saveUser(usersJSON)
 
-        return `User ${username} updated successfully`
+        return new Promise((resolve, reject) => {
+            User.findByIdAndUpdate(userId, {
+                username,
+                isAdmin
+            }, function (err) {
+                if (err) {
+                    reject(err)
+                } else {
+                    resolve(`User ${username} updated successfully`)
+                }
+            })
+        });
     }
 }
 
 // Add new User to DB and JSON file
 exports.addUser = async function (req) {
     // Pull data from the front end form
-    const {firstName, lastName, username, timeOut, isAdmin} = req.body;
+    const {firstName, lastName, username, timeOut, isAdmin,
+            vs, cs, ds, us} = req.body;
 
     // Init. users array
     let usersJSON = await jsonDAL.getUsers();
+    let permissionsJSON = await jsonDAL.getPermissions()
     let usersDataArr = usersJSON.usersData;
+    let permissionsDataArr = permissionsJSON.permissionsData;
 
-    // Create new User in DB
-    const newUser = new User({
-        username,
-        isAdmin,
-        isActivated: false
-    });
+    let errors = [];
 
-    await newUser.save()
+    // Check required fields not blank
+    if (!firstName || !lastName || !username || !timeOut) {
+        errors.push({msg: 'Please dont leave blank fields'});
+        return errors;
+    }
+    // Check if username is unique
+    let searchForUser = await User.find({username})
+    if (searchForUser.length > 0) {
+        errors.push({msg: 'This username is already exists'});
+        return errors;
+    }
+    else {
+        // Create new User in DB
+        const newUser = new User({
+            username,
+            isAdmin,
+            isActivated: false
+        });
 
-    usersDataArr.push({
-        id: newUser._id,
-        firstName,
-        lastName,
-        timeOut,
-        created: new Date()
-    })
-    // Create new User in JSON
-    await jsonDAL.saveUser(usersJSON)
+        await newUser.save()
 
-    return `New user ${username} added successfully`
+        usersDataArr.push({
+            id: newUser._id,
+            firstName,
+            lastName,
+            timeOut,
+            created: new Date()
+        })
+
+        permissionsDataArr.push({
+            id: newUser._id,
+            vs,
+            cs,
+            ds,
+            us
+        })
+
+        // Create new User in JSON
+        await jsonDAL.saveUser(usersJSON)
+        await jsonDAL.savePermissions(permissionsJSON)
+
+        return `New user ${username} added successfully`
+    }
 }
 
 

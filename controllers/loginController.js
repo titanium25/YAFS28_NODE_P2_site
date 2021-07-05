@@ -16,7 +16,7 @@ router.get('/register', function (req, res, next) {
 });
 
 // Register Handler
-router.post('/registerForm', function (req, res, next) {
+router.post('/registerForm', async function (req, res, next) {
     const {username, password, password2} = req.body
     let errors = [];
 
@@ -33,6 +33,12 @@ router.post('/registerForm', function (req, res, next) {
     // Check pass length
     if (password.length < 6) {
         errors.push({msg: 'Password should be at least 6 characters'})
+    }
+
+    // Check if username is unique
+    let searchForUser = await User.find({username})
+    if (searchForUser.length > 0) {
+        errors.push({msg: 'This username is already exists'});
     }
 
     if (errors.length > 0) {
@@ -59,7 +65,7 @@ router.post('/registerForm', function (req, res, next) {
                     // Pass - Username Exists
                 } else {
                     // Check if password for this user already SET. If User is activated or not
-                    if(user.isActivated){
+                    if (user.isActivated) {
                         // Error - User exists AND activated
                         errors.push({msg: 'This user is already activated'})
                         res.render('register', {
@@ -79,9 +85,9 @@ router.post('/registerForm', function (req, res, next) {
                         bcrypt.hash(user.password, salt, (err, hash) => {
                                 if (err) throw err;
                                 // Set Password to Hashed
-                            user.password = hash;
+                                user.password = hash;
                                 // Save User
-                            user.save()
+                                user.save()
                                     .then(user => {
                                         req.flash('success_msg', 'You are now registered and can log in')
                                         res.redirect('/');

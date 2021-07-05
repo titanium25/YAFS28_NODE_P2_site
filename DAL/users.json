@@ -29,18 +29,18 @@
       "created": "2021-07-03T00:58:27.368Z"
     },
     {
-      "id": "60dfc66daf5c024578aedd87",
-      "firstName": "ALEXANDER",
-      "lastName": "Laz_test",
-      "timeOut": "555",
-      "created": "2021-07-03T02:07:41.915Z"
+      "id": "60e1e5347af6852c84778cad",
+      "firstName": "newUser",
+      "lastName": "LAZAROVICH",
+      "timeOut": "5000",
+      "created": "2021-07-04T16:43:33.076Z"
     },
     {
-      "id": "60dfc7c2c086c85858e89194",
-      "firstName": "Goo",
-      "lastName": "Ml",
-      "timeOut": "600",
-      "created": "2021-07-03T02:13:22.718Z"
+      "id": "60e1e85c155c3637d859c618",
+      "firstName": "Edited",
+      "lastName": "in JSON",
+      "timeOut": "70",
+      "created": "2021-07-04T16:57:00.739Z"
     }
   ]
 }

@@ -1,6 +1,7 @@
 const jsonFile = require("jsonfile");
 
 const fileNameUsers = __dirname + "/users.json";
+const filePermissions = __dirname + "/permissions.json";
 
 exports.getUsers = () => {
     return new Promise((resolve, reject) => {
@@ -21,6 +22,30 @@ exports.saveUser = (obj) => {
                 reject(err);
             } else {
                 resolve("User Saved!");
+            }
+        })
+    })
+}
+
+exports.getPermissions = () => {
+    return new Promise((resolve, reject) => {
+        jsonFile.readFile(filePermissions, (err, res) => {
+            if (err) {
+                reject(err);
+            };
+            resolve(res);
+        });
+    });
+};
+
+
+exports.savePermissions = (obj) => {
+    return new Promise((resolve, reject) => {
+        jsonFile.writeFile(filePermissions, obj, {spaces: 2}, function (err) {
+            if (err){
+                reject(err);
+            } else {
+                resolve("Permissions Saved!");
             }
         })
     })
