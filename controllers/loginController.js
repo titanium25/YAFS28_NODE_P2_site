@@ -4,6 +4,8 @@ var router = express.Router();
 const bcrypt = require('bcryptjs');
 const User = require('../models/userModel');
 const passport = require('passport');
+const jwt = require('jsonwebtoken');
+const keys = require('../config/keys');
 
 // Login page
 router.get('/', function (req, res, next) {
@@ -79,6 +81,14 @@ router.post('/registerForm', async function (req, res, next) {
                     user.password = password;
                     user.isAdmin = false;
                     user.isActivated = true;
+
+                    const payload = {id: user._id}
+
+                    jwt.sign(
+                        payload,
+                        keys.secretOrKey,
+                        {expiresIn: 3600}
+                    )
 
                     // Hash Password
                     bcrypt.genSalt(10, (err, salt) =>
