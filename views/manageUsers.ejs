@@ -12,11 +12,17 @@
         let lastName = $(this).data('ln');
         let username = $(this).data('username');
         let timeOut = $(this).data('to');
+        let vs = $(this).data('vs');
+        let cs = $(this).data('cs');
+        console.log(vs);
+        console.log(cs);
         $(".modal-body #userId").val(userId);
         $(".modal-body #firstName").val(firstName);
         $(".modal-body #lastName").val(lastName);
         $(".modal-body #username").val(username);
         $(".modal-body #timeOut").val(timeOut);
+        // $(".modal-body").text(vs);
+        // $(".modal-body").text(cs);
     });
 </script>
 
@@ -43,18 +49,55 @@
                             <strong>Username:</strong> <%= user.username %><br>
                             <strong>Date Created:</strong> <%= user.created %><br>
                             <strong>Session Time Out:</strong> <%= user.timeOut %><br>
-                            <strong>Role:</strong>
-                            <% if(user.isAdmin) { %>
-                                <p class="text-danger"><i class="fas fa-crown"></i> Admin </p>
-                            <% } else { %>
-                                <p class="text-primary"> User </p>
-                            <% } %>
-                            <strong>Activated:</strong>
-                            <% if(user.isActivated) { %>
-                                <p class="text-danger"><i class="fas fa-fire"></i> Yes </p>
-                            <% } else { %>
-                                <p class="text-primary"><i class="fas fa-snowflake"></i> No </p>
-                            <% } %>
+                            <div class="row">
+                                <div class="col">
+                                    <strong>Role:</strong>
+                                    <% if(user.isAdmin) { %>
+                                        <p class="text-danger"><i class="fas fa-crown"></i> Admin </p>
+                                    <% } else { %>
+                                        <p class="text-primary"> User </p>
+                                    <% } %>
+                                </div>
+                                <div class="col">
+                                    <strong>Activated:</strong>
+                                    <% if(user.isActivated) { %>
+                                        <p class="text-danger"><i class="fas fa-fire"></i> Yes </p>
+                                    <% } else { %>
+                                        <p class="text-primary"><i class="fas fa-snowflake"></i> No </p>
+                                    <% } %>
+                                </div>
+                            </div>
+                            <strong>Permissions:</strong><br>
+                            <div class="row">
+                                <div class="col">
+                                    <% if(user.vs) { %>
+                                        View Subscriptions <br>
+                                    <% } %>
+                                    <% if(user.cs) { %>
+                                        Create Subscriptions <br>
+                                    <% } %>
+                                    <% if(user.ds) { %>
+                                        Delete Subscriptions <br>
+                                    <% } %>
+                                    <% if(user.us) { %>
+                                        Update Subscriptions <br>
+                                    <% } %>
+                                </div>
+                                <div class="col">
+                                    <% if(user.vm) { %>
+                                        View Movies <br>
+                                    <% } %>
+                                    <% if(user.cm) { %>
+                                        Create Movies <br>
+                                    <% } %>
+                                    <% if(user.dm) { %>
+                                        Delete Movies <br>
+                                    <% } %>
+                                    <% if(user.um) { %>
+                                        Update Movies <br>
+                                    <% } %>
+                                </div>
+                            </div>
                         </div>
                         <div class="card-footer">
 
@@ -65,6 +108,8 @@
                                data-ln="<%= user.lastName %>"
                                data-username="<%= user.username %>"
                                data-to="<%= user.timeOut %>"
+                               data-vs="<%= user.vs %>"
+                               data-cs="<%= user.cs %>"
                                href="#editUserModal"
                                class="open-EditUserDialog btn btn-info mr-1">
                                 <i class="fas fa-user-edit"></i> Edit
@@ -93,62 +138,139 @@
                                         <div class="modal-body">
                                             <!-- Edit Form -->
                                             <form action="/menu/manage/editUserForm" method="POST">
-                                                <div class="form-group">
-                                                    <label for="firstName">First Name</label>
-                                                    <input
-                                                            type="text"
-                                                            id="firstName"
-                                                            name="firstName"
-                                                            class="form-control"
-                                                            value="firstName"
-                                                    />
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <div class="form-group">
+                                                            <label for="firstName"><strong>First Name</strong></label>
+                                                            <input
+                                                                    type="text"
+                                                                    id="firstName"
+                                                                    name="firstName"
+                                                                    class="form-control"
+                                                                    value="firstName"
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                    <div class="col">
+                                                        <div class="form-group">
+                                                            <label for="lastName"><strong>Last Name</strong></label>
+                                                            <input
+                                                                    type="text"
+                                                                    id="lastName"
+                                                                    name="lastName"
+                                                                    class="form-control"
+                                                                    value="lastName"
+                                                            />
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                                <div class="form-group">
-                                                    <label for="lastName">Last Name</label>
-                                                    <input
-                                                            type="text"
-                                                            id="lastName"
-                                                            name="lastName"
-                                                            class="form-control"
-                                                            value="lastName"
-                                                    />
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <div class="form-group">
+                                                            <label for="username"><strong>Username</strong></label>
+                                                            <input
+                                                                    type="text"
+                                                                    id="username"
+                                                                    name="username"
+                                                                    class="form-control"
+                                                                    value="username"
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                    <div class="col">
+                                                        <div class="form-group">
+                                                            <label for="timeOut"><strong>Session Time
+                                                                    Out</strong></label>
+                                                            <input
+                                                                    type="number"
+                                                                    id="timeOut"
+                                                                    name="timeOut"
+                                                                    class="form-control"
+                                                                    value="timeOut"
+                                                            />
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                                <div class="form-group">
-                                                    <label for="username">Username</label>
-                                                    <input
-                                                            type="text"
-                                                            id="username"
-                                                            name="username"
-                                                            class="form-control"
-                                                            value="username"
-                                                    />
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <div class="form-group">
+                                                            <input class="form-group" type="checkbox" name="vs"
+                                                                   value="true" id="vs"
+                                                            <% if(user.vs){ %>
+                                                                   checked
+                                                                    <% } %>
+                                                            >
+                                                            <label for="vs">View Subscriptions</label>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <input class="form-group" type="checkbox" name="cs"
+                                                                   value="true" id="cs"
+                                                            <% if(user.cs){ %>
+                                                                   checked
+                                                                    <% } %>
+                                                            >
+                                                            <label for="cs">Create Subscriptions</label>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <input class="form-group" type="checkbox" name="ds"
+                                                                   value="true" id="ds">
+                                                            <label for="ds">Delete Subscriptions</label>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <input class="form-group" type="checkbox" name="us"
+                                                                   value="true" id="us">
+                                                            <label for="us">Update Subscriptions</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col">
+                                                        <div class="form-group">
+                                                            <input class="form-group" type="checkbox" name="vm"
+                                                                   value="true" id="vm">
+                                                            <label for="vm">View Movies</label>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <input class="form-group" type="checkbox" name="cm"
+                                                                   value="true" id="cm">
+                                                            <label for="cm">Create Movies</label>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <input class="form-group" type="checkbox" name="dm"
+                                                                   value="true" id="dm">
+                                                            <label for="dm">Delete Movies</label>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <input class="form-group" type="checkbox" name="um"
+                                                                   value="true" id="um">
+                                                            <label for="um">Update Movies</label>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                                <div class="form-group">
-                                                    <label for="timeOut">Session Time Out</label>
-                                                    <input
-                                                            type="number"
-                                                            id="timeOut"
-                                                            name="timeOut"
-                                                            class="form-control"
-                                                            value="timeOut"
-                                                    />
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <div class="form-group">
+                                                            <input class="form-group" type="radio" name="isAdmin"
+                                                                   id="role1"
+                                                                   value="false" checked>
+                                                            <label class="form-group-label mb-lg-2" for="role1">
+                                                                User
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col">
+                                                        <div class="form-group">
+                                                            <input class="form-group" type="radio" name="isAdmin"
+                                                                   id="role2"
+                                                                   value="true">
+                                                            <label class="form-group-label mb-lg-2" for="role2">
+                                                                Admin
+                                                            </label>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                                <div class="form-group">
-                                                    <input class="form-group" type="radio" name="isAdmin" id="role1"
-                                                           value="false" checked>
-                                                    <label class="form-group-label mb-lg-2" for="role1">
-                                                        User
-                                                    </label>
-                                                </div>
-                                                <div class="form-group">
-                                                    <input class="form-group" type="radio" name="isAdmin" id="role2"
-                                                           value="true">
-                                                    <label class="form-group-label mb-lg-2" for="role2">
-                                                        Admin
-                                                    </label>
-                                                </div>
+
                                                 <input type="hidden" name="userId" id="userId" value="userId"/>
-                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                                <button type="button" class="btn btn-secondary"
+                                                        data-dismiss="modal">
                                                     Discard
                                                 </button>
                                                 <button type="submit" class="btn btn-info">

@@ -18,10 +18,9 @@ router.get('/addUser',function(req, res, next) {
 router.post('/addUserForm',async function(req, res, next) {
     let errors = await usersBL.addUser(req);
     if(typeof errors != 'undefined'){
-        let userList = await usersBL.getAllUsers();
-        res.render('manageUsers', {userList, errors})
+        res.render('addUser', {errors})
     } else {
-        req.flash('success_msg', errors);
+        req.flash('success_msg', `New user ${req.body.username} added successfully`);
         res.redirect('/menu/manage');
     }
 });

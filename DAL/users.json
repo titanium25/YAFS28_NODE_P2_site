@@ -8,39 +8,18 @@
       "created": "2021-06-29T15:53:00.334Z"
     },
     {
-      "id": "60df30f301e9010544b0ba77",
-      "firstName": "Rene",
-      "lastName": "Marek",
-      "timeOut": "50",
-      "created": "2021-07-02T15:29:55.981Z"
-    },
-    {
-      "id": "60dfb367602ed453007adf2a",
-      "firstName": "Leanne",
-      "lastName": "Graham",
-      "timeOut": "5000",
-      "created": "2021-07-03T00:46:31.709Z"
-    },
-    {
-      "id": "60dfb63385efde5d40f31442",
-      "firstName": "Leanne",
+      "id": "60e3582391d6f347f4d85e40",
+      "firstName": "admin",
       "lastName": "LAZAROVICH",
-      "timeOut": "5000",
-      "created": "2021-07-03T00:58:27.368Z"
-    },
-    {
-      "id": "60e1e5347af6852c84778cad",
-      "firstName": "newUser",
-      "lastName": "LAZAROVICH",
-      "timeOut": "5000",
-      "created": "2021-07-04T16:43:33.076Z"
-    },
-    {
-      "id": "60e1e85c155c3637d859c618",
-      "firstName": "Edited",
-      "lastName": "in JSON",
       "timeOut": "70",
-      "created": "2021-07-04T16:57:00.739Z"
+      "created": "2021-07-05T19:06:11.794Z"
+    },
+    {
+      "id": "60e36e7760b9fc408c615b0e",
+      "firstName": "Lo",
+      "lastName": "Nm",
+      "timeOut": "3",
+      "created": "2021-07-05T20:41:27.568Z"
     }
   ]
 }

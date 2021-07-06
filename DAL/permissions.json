@@ -1,4 +1,37 @@
 {
   "permissionsData": [
+    {
+      "id": "60df2cabbc97e4709db5dabb",
+      "vs": true,
+      "cs": true,
+      "ds": true,
+      "us": true,
+      "vm": true,
+      "cm": true,
+      "dm": true,
+      "um": true
+    },
+    {
+      "id": "60e3582391d6f347f4d85e40",
+      "vs": false,
+      "cs": true,
+      "ds": false,
+      "us": false,
+      "vm": false,
+      "cm": false,
+      "dm": false,
+      "um": true
+    },
+    {
+      "id": "60e36e7760b9fc408c615b0e",
+      "vs": true,
+      "cs": false,
+      "ds": false,
+      "us": true,
+      "vm": true,
+      "cm": true,
+      "dm": false,
+      "um": true
+    }
   ]
 }
