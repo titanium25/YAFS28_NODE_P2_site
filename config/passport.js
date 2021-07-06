@@ -1,15 +1,21 @@
-const LocalStrategy = require('passport-local').Strategy;
+const JwtStrategy = require('passport-jwt').Strategy;
+const ExtractJwt = require('passport-jwt').ExtractJwt;
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
+const keys = require('../config/keys');
+
+const opts = {};
+opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
+opts.secretOrKey = keys.secretOrKey;
 
 // Load User Model
 const User = require('../models/userModel');
 
-module.exports = function(passport) {
+module.exports = passport => {
     passport.use(
-        new LocalStrategy({ usernameField: 'username'}, (username, password, done) => {
+        new JwtStrategy(opts, (jwt_payload, password, done) => {
             // Match User
-            User.findOne({ username : username})
+            User.findById(jwt_payload._id)
                 .then(user => {
                     if(!user){
                         return done(null, false, {message: 'That username is not registered'});
