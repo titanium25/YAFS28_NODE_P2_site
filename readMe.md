@@ -17,7 +17,8 @@
     * Check if inputs got white spaces
     * Check if first name & last name got numbers
     * Check if inputs under 12 characters long
-  * View checkbox checked automatically if create/delete/update is selected 
+  * View checkbox checked automatically if create/delete/update is selected
+  * New user will be created with proper Israel date and time zone
 * Edit user - modal
   * Validation
     * Check for blank fields
