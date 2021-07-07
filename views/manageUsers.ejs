@@ -12,24 +12,23 @@
         let lastName = $(this).data('ln');
         let username = $(this).data('username');
         let timeOut = $(this).data('to');
-        let vs = $(this).data('vs');
-        let cs = $(this).data('cs');
-        console.log(vs);
-        console.log(cs);
+
         $(".modal-body #userId").val(userId);
         $(".modal-body #firstName").val(firstName);
         $(".modal-body #lastName").val(lastName);
         $(".modal-body #username").val(username);
         $(".modal-body #timeOut").val(timeOut);
-        // $(".modal-body").text(vs);
-        // $(".modal-body").text(cs);
+
     });
+
 </script>
+
 
 <div class="row mt-5 justify-content-md-center">
     <div class="card-body">
+
         <h1 class="text-center mb-3">
-            <i class="fas fa-users-cog"></i> Users Manage Console
+            <i class="fas fa-users-cog"></i> Manage Users Console
         </h1>
         <% include ./partials/messages.ejs %>
 
@@ -48,14 +47,20 @@
                             <strong>Name:</strong> <%= user.firstName %> <%= user.lastName %><br>
                             <strong>Username:</strong> <%= user.username %><br>
                             <strong>Date Created:</strong> <%= user.created %><br>
-                            <strong>Session Time Out:</strong> <%= user.timeOut %><br>
+                            <strong>Session Time Out:</strong>
+                            <% if(user.isAdmin) { %>
+                                <i class="fas fa-infinity"></i>
+                            <% } else { %>
+                                <%= user.timeOut %>
+                            <% } %>
+                            <br>
                             <div class="row">
                                 <div class="col">
                                     <strong>Role:</strong>
                                     <% if(user.isAdmin) { %>
                                         <p class="text-danger"><i class="fas fa-crown"></i> Admin </p>
                                     <% } else { %>
-                                        <p class="text-primary"> User </p>
+                                        <p class="text-primary"><i class="fas fa-user"></i> User </p>
                                     <% } %>
                                 </div>
                                 <div class="col">
@@ -67,39 +72,65 @@
                                     <% } %>
                                 </div>
                             </div>
-                            <strong>Permissions:</strong><br>
                             <div class="row">
                                 <div class="col">
+                                    <p class="text-dark"><strong>Subscriptions:</strong></p>
                                     <% if(user.vs) { %>
-                                        View Subscriptions <br>
+                                        <p class="text-success"><i class="fas fa-check-circle"></i> View</p>
+                                    <% } else { %>
+                                        <p class="text-danger"><i class="fas fa-times-circle"></i> View</p>
                                     <% } %>
                                     <% if(user.cs) { %>
-                                        Create Subscriptions <br>
+                                        <p class="text-success"><i class="fas fa-check-circle"></i> Create</p>
+                                    <% } else { %>
+                                        <p class="text-danger"><i class="fas fa-times-circle"></i> Create</p>
                                     <% } %>
                                     <% if(user.ds) { %>
-                                        Delete Subscriptions <br>
+                                        <p class="text-success"><i class="fas fa-check-circle"></i> Delete</p>
+                                    <% } else { %>
+                                        <p class="text-danger"><i class="fas fa-times-circle"></i> Delete</p>
                                     <% } %>
                                     <% if(user.us) { %>
-                                        Update Subscriptions <br>
+                                        <p class="text-success"><i class="fas fa-check-circle"></i> Update</p>
+                                    <% } else { %>
+                                        <p class="text-danger"><i class="fas fa-times-circle"></i> Update</p>
                                     <% } %>
                                 </div>
                                 <div class="col">
+                                    <p class="text-dark"><strong>Movies:</strong></p>
                                     <% if(user.vm) { %>
-                                        View Movies <br>
+                                        <p class="text-success"><i class="fas fa-check-circle"></i> View</p>
+                                    <% } else { %>
+                                        <p class="text-danger"><i class="fas fa-times-circle"></i> View</p>
                                     <% } %>
                                     <% if(user.cm) { %>
-                                        Create Movies <br>
+                                        <p class="text-success"><i class="fas fa-check-circle"></i> Create</p>
+                                    <% } else { %>
+                                        <p class="text-danger"><i class="fas fa-times-circle"></i> Create</p>
                                     <% } %>
                                     <% if(user.dm) { %>
-                                        Delete Movies <br>
+                                        <p class="text-success"><i class="fas fa-check-circle"></i> Delete</p>
+                                    <% } else { %>
+                                        <p class="text-danger"><i class="fas fa-times-circle"></i> Delete</p>
                                     <% } %>
                                     <% if(user.um) { %>
-                                        Update Movies <br>
+                                        <p class="text-success"><i class="fas fa-check-circle"></i> Update</p>
+                                    <% } else { %>
+                                        <p class="text-danger"><i class="fas fa-times-circle"></i> Update</p>
                                     <% } %>
                                 </div>
                             </div>
                         </div>
                         <div class="card-footer">
+
+                            <!-- Button trigger delete modal -->
+                            <a data-toggle="modal"
+                               data-id="<%= user.id %>"
+                               data-username="<%= user.username %>"
+                               href="#deleteUserModal"
+                               class="open-DeleteUserDialog btn btn-danger mr-1 float-right">
+                                <i class="fas fa-user-times"></i> Delete
+                            </a>
 
                             <!-- Button trigger edit modal -->
                             <a data-toggle="modal"
@@ -108,20 +139,9 @@
                                data-ln="<%= user.lastName %>"
                                data-username="<%= user.username %>"
                                data-to="<%= user.timeOut %>"
-                               data-vs="<%= user.vs %>"
-                               data-cs="<%= user.cs %>"
                                href="#editUserModal"
-                               class="open-EditUserDialog btn btn-info mr-1">
+                               class="open-EditUserDialog btn btn-info mr-1 float-right">
                                 <i class="fas fa-user-edit"></i> Edit
-                            </a>
-
-                            <!-- Button trigger delete modal -->
-                            <a data-toggle="modal"
-                               data-id="<%= user.id %>"
-                               data-username="<%= user.username %>"
-                               href="#deleteUserModal"
-                               class="open-DeleteUserDialog btn btn-danger">
-                                <i class="fas fa-user-times"></i> Delete
                             </a>
 
                             <!-- Edit Modal -->
@@ -194,60 +214,6 @@
                                                 <div class="row">
                                                     <div class="col">
                                                         <div class="form-group">
-                                                            <input class="form-group" type="checkbox" name="vs"
-                                                                   value="true" id="vs"
-                                                            <% if(user.vs){ %>
-                                                                   checked
-                                                                    <% } %>
-                                                            >
-                                                            <label for="vs">View Subscriptions</label>
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <input class="form-group" type="checkbox" name="cs"
-                                                                   value="true" id="cs"
-                                                            <% if(user.cs){ %>
-                                                                   checked
-                                                                    <% } %>
-                                                            >
-                                                            <label for="cs">Create Subscriptions</label>
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <input class="form-group" type="checkbox" name="ds"
-                                                                   value="true" id="ds">
-                                                            <label for="ds">Delete Subscriptions</label>
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <input class="form-group" type="checkbox" name="us"
-                                                                   value="true" id="us">
-                                                            <label for="us">Update Subscriptions</label>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col">
-                                                        <div class="form-group">
-                                                            <input class="form-group" type="checkbox" name="vm"
-                                                                   value="true" id="vm">
-                                                            <label for="vm">View Movies</label>
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <input class="form-group" type="checkbox" name="cm"
-                                                                   value="true" id="cm">
-                                                            <label for="cm">Create Movies</label>
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <input class="form-group" type="checkbox" name="dm"
-                                                                   value="true" id="dm">
-                                                            <label for="dm">Delete Movies</label>
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <input class="form-group" type="checkbox" name="um"
-                                                                   value="true" id="um">
-                                                            <label for="um">Update Movies</label>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col">
-                                                        <div class="form-group">
                                                             <input class="form-group" type="radio" name="isAdmin"
                                                                    id="role1"
                                                                    value="false" checked>
@@ -267,13 +233,60 @@
                                                         </div>
                                                     </div>
                                                 </div>
-
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <p class="text-dark"><strong>Subscriptions:</strong></p>
+                                                        <div class="form-group">
+                                                            <input class="form-group" type="checkbox" name="vs"
+                                                                   value="true" id="vs">
+                                                            <label for="vs">View</label>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <input class="form-group" type="checkbox" name="cs"
+                                                                   value="true" id="cs">
+                                                            <label for="cs">Create</label>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <input class="form-group" type="checkbox" name="ds"
+                                                                   value="true" id="ds">
+                                                            <label for="ds">Delete</label>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <input class="form-group" type="checkbox" name="us"
+                                                                   value="true" id="us">
+                                                            <label for="us">Update</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col">
+                                                        <p class="text-dark"><strong>Movies:</strong></p>
+                                                        <div class="form-group">
+                                                            <input class="form-group" type="checkbox" name="vm"
+                                                                   value="true" id="vm">
+                                                            <label for="vm">View</label>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <input class="form-group" type="checkbox" name="cm"
+                                                                   value="true" id="cm">
+                                                            <label for="cm">Create</label>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <input class="form-group" type="checkbox" name="dm"
+                                                                   value="true" id="dm">
+                                                            <label for="dm">Delete</label>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <input class="form-group" type="checkbox" name="um"
+                                                                   value="true" id="um">
+                                                            <label for="um">Update</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                                 <input type="hidden" name="userId" id="userId" value="userId"/>
-                                                <button type="button" class="btn btn-secondary"
+                                                <button type="button" class="btn btn-secondary mr-1 float-right"
                                                         data-dismiss="modal">
                                                     Discard
                                                 </button>
-                                                <button type="submit" class="btn btn-info">
+                                                <button type="submit" class="btn btn-info mr-1 float-right">
                                                     <i class="fas fa-user-edit"></i> Save Changes
                                                 </button>
                                             </form>
