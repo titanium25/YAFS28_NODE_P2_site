@@ -1,3 +1,37 @@
+<script type="text/javascript">
+    window.onload=function() {
+        cbcs = document.getElementById('cs');
+        cbds = document.getElementById('ds');
+        cbus = document.getElementById('us');
+
+        cbcm = document.getElementById('cm');
+        cbdm = document.getElementById('dm');
+        cbum = document.getElementById('um');
+
+        cbcs.addEventListener('change', e => {
+            if (e.target.checked) document.getElementById("vs").checked = true;
+        });
+        cbds.addEventListener('change', e => {
+            if (e.target.checked) document.getElementById("vs").checked = true;
+        });
+        cbus.addEventListener('change', e => {
+            if (e.target.checked) document.getElementById("vs").checked = true;
+        });
+
+        cbcm.addEventListener('change', e => {
+            if (e.target.checked) document.getElementById("vm").checked = true;
+        });
+        cbdm.addEventListener('change', e => {
+            if (e.target.checked) document.getElementById("vm").checked = true;
+        });
+        cbum.addEventListener('change', e => {
+            if (e.target.checked) document.getElementById("vm").checked = true;
+        });
+    }
+</script>
+
+
+
 <div class="row mt-5 justify-content-md-center">
     <div class="card-body">
         <h1 class="text-center mb-3">
