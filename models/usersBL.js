@@ -154,7 +154,9 @@ exports.addUser = async function (req) {
             firstName,
             lastName,
             timeOut,
-            created: new Date()
+            created: new Date().toLocaleString('en-US', {timeZone: 'Asia/Jerusalem'}).
+                     replace(/T/, ' ').      // replace T with a space
+                     replace(/\..+/, '')     // delete the dot and everything after
         })
 
         permissionsDataArr.push({
