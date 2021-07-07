@@ -323,7 +323,7 @@
                                         </div>
                                         <div class="modal-body">
                                             <p>This action cannot be undone. This will permanently delete the <b><span/>'s</b>,
-                                                permissions, data, subscriptions. </p>
+                                                permissions, data and subscriptions. </p>
                                             <p>Please type <b>delete <span/></b> to confirm.</p>
                                             <input
                                                     type="text"
@@ -332,13 +332,10 @@
                                             />
                                         </div>
                                         <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">
-                                                Discard
-                                            </button>
                                             <form action="/menu/manage/deleteUserForm" method="POST">
                                                 <input type="hidden" name="userId" id="userId" value="userId"/>
-                                                <button type="submit" id="delete" class="btn btn-danger">
-                                                    Yes, Delete
+                                                <button type="submit" id="delete" class="btn btn-block btn-danger">
+                                                    I understand the consequences, delete this user
                                                 </button>
                                             </form>
                                         </div>
