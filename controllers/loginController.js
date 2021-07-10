@@ -5,6 +5,7 @@ const bcrypt = require('bcryptjs');
 const User = require('../models/userModel');
 
 const utils = require('../lib/utils');
+const jsonDAL = require('../DAL/jsonDAL');
 
 // Login page
 router.get('/', function (req, res, next) {
@@ -113,12 +114,16 @@ router.post('/signIn', function (req, res, next) {
             }
 
             // Match the Password
-            bcrypt.compare(password, user.password, (err, isMatch) => {
+            bcrypt.compare(password, user.password, async (err, isMatch) => {
                 if (err) throw  err;
 
                 if (isMatch) {
-                    const expirationSeconds = 60 * 60 * 24 * 7; // one week
-                    const cookieExpiration = Date.now() + expirationSeconds * 1000;
+                    let usersJSON = await jsonDAL.getUsers();
+                    let usersDataArr = usersJSON.usersData;
+
+                    let findUser = usersDataArr.find(u => u.id === user.id)
+                    // const expirationSeconds = 60 * 60 * 24 * 7; // one week
+                    const cookieExpiration = Date.now() + findUser.timeOut * 1000;
                     let token = utils.issueJWT(user)
                     // Send Set-Cookie header
                     res.cookie('jwt', token, {expires: new Date(cookieExpiration), httpOnly: true});

@@ -18,8 +18,19 @@
       "ds": true,
       "us": true,
       "vm": true,
-      "cm": true,
-      "dm": true,
+      "cm": false,
+      "dm": false,
+      "um": true
+    },
+    {
+      "id": "60e91d48cb2ba94b1c479667",
+      "vs": true,
+      "cs": false,
+      "ds": false,
+      "us": true,
+      "vm": true,
+      "cm": false,
+      "dm": false,
       "um": true
     }
   ]

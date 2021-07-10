@@ -6,6 +6,7 @@ const passport = require('passport');
 const utils = require('../lib/utils');
 const usersBL = require('../models/usersBL')
 
+
 // Users Console
 router.get('/', passport.authenticate('jwt', { session: false }), async function (req, res, next) {
     let obj = utils.getPayloadFromToken(req)
