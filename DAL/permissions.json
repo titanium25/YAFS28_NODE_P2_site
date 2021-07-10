@@ -1,7 +1,18 @@
 {
   "permissionsData": [
     {
-      "id": "60df2cabbc97e4709db5dabb",
+      "id": "60e8ec85877f0c4a3c978d6f",
+      "vs": false,
+      "cs": false,
+      "ds": false,
+      "us": false,
+      "vm": false,
+      "cm": false,
+      "dm": false,
+      "um": false
+    },
+    {
+      "id": "60e8ed8f6dc7ce103c884289",
       "vs": true,
       "cs": true,
       "ds": true,
@@ -9,61 +20,6 @@
       "vm": true,
       "cm": true,
       "dm": true,
-      "um": true
-    },
-    {
-      "id": "60e3582391d6f347f4d85e40",
-      "vs": true,
-      "cs": true,
-      "ds": true,
-      "us": true,
-      "vm": false,
-      "cm": true,
-      "dm": false,
-      "um": true
-    },
-    {
-      "id": "60e36e7760b9fc408c615b0e",
-      "vs": false,
-      "cs": false,
-      "ds": true,
-      "us": false,
-      "vm": false,
-      "cm": true,
-      "dm": false,
-      "um": true
-    },
-    {
-      "id": "60e5704e0cc25d5700ed54d2",
-      "vs": true,
-      "cs": true,
-      "ds": false,
-      "us": false,
-      "vm": true,
-      "cm": true,
-      "dm": false,
-      "um": true
-    },
-    {
-      "id": "60e570e2c67e9059a4ddbc13",
-      "vs": true,
-      "cs": false,
-      "ds": true,
-      "us": true,
-      "vm": true,
-      "cm": true,
-      "dm": false,
-      "um": false
-    },
-    {
-      "id": "60e57125a852f95f8ccbad64",
-      "vs": true,
-      "cs": false,
-      "ds": false,
-      "us": true,
-      "vm": true,
-      "cm": false,
-      "dm": false,
       "um": true
     }
   ]

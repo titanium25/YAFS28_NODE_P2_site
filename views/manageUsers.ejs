@@ -1,5 +1,5 @@
 <script type="text/javascript">
-    window.onload=function() {
+    window.onload = function () {
         cbcs = document.getElementById('cs');
         cbds = document.getElementById('ds');
         cbus = document.getElementById('us');
@@ -30,44 +30,67 @@
     }
 
 
-    $(document).on("click", ".open-DeleteUserDialog", function () {
-        let userId = $(this).data('id');
-        let userName = $(this).data('username');
-        $(".modal-footer #userId").val(userId);
-        $(".modal-body span").text(userName);
+        $(document).on("click", ".open-DeleteUserDialog", function () {
+            let userId = $(this).data('id');
+            let userName = $(this).data('username');
+            $(".modal-footer #userId").val(userId);
+            $(".modal-body span").text(userName);
 
-        document.getElementById("delete").disabled = true;
+            document.getElementById("delete").disabled = true;
 
-        /* event listener */
-        document.getElementsByName("confirm")[0].addEventListener('change', doThing);
+            /* event listener */
+            document.getElementsByName("confirm")[0].addEventListener('change', doThing);
 
 
-        /* function */
-        function doThing(){
-            if(document.getElementsByName("confirm")[0].value == ('delete ' + userName))
-            document.getElementById("delete").disabled = false;
-        }
-    });
+            /* function */
+            function doThing() {
+                if (document.getElementsByName("confirm")[0].value === ('delete ' + userName))
+                    document.getElementById("delete").disabled = false;
+            }
+        });
 
-    $(document).on("click", ".open-EditUserDialog", function () {
-        let userId = $(this).data('id');
-        let firstName = $(this).data('fn');
-        let lastName = $(this).data('ln');
-        let username = $(this).data('username');
-        let timeOut = $(this).data('to');
 
-        $(".modal-body #userId").val(userId);
-        $(".modal-body #firstName").val(firstName);
-        $(".modal-body #lastName").val(lastName);
-        $(".modal-body #username").val(username);
-        $(".modal-body #timeOut").val(timeOut);
 
-    });
+        $(document).on("click", ".open-EditUserDialog", function () {
+            let userId = $(this).data('id');
+            let firstName = $(this).data('fn');
+            let lastName = $(this).data('ln');
+            let username = $(this).data('username');
+            let timeOut = $(this).data('to');
+            let admin = $(this).data('admin');
+            let vs = $(this).data('vs');
+            let cs = $(this).data('cs');
+            let ds = $(this).data('ds');
+            let us = $(this).data('us');
+            let vm = $(this).data('vm');
+            let cm = $(this).data('cm');
+            let dm = $(this).data('dm');
+            let um = $(this).data('um');
+
+            document.getElementById('role2').checked = admin;
+            document.getElementById('role1').checked = !admin;
+            document.getElementById('vsm').checked = vs;
+            document.getElementById('csm').checked = cs;
+            document.getElementById('dsm').checked = ds;
+            document.getElementById('usm').checked = us;
+            document.getElementById('vmm').checked = vm;
+            document.getElementById('cmm').checked = cm;
+            document.getElementById('dmm').checked = dm;
+            document.getElementById('umm').checked = um;
+
+            $(".modal-body #userId").val(userId);
+            $(".modal-body #firstName").val(firstName);
+            $(".modal-body #lastName").val(lastName);
+            $(".modal-body #username").val(username);
+            $(".modal-body #timeOut").val(timeOut);
+
+        });
 
 
 
 </script>
 
+<% include ./partials/navBar.ejs %>
 
 <div class="row mt-5 justify-content-md-center">
     <div class="card-body">
@@ -184,6 +207,15 @@
                                data-ln="<%= user.lastName %>"
                                data-username="<%= user.username %>"
                                data-to="<%= user.timeOut %>"
+                               data-admin="<%= user.isAdmin %>"
+                               data-vs="<%= user.vs %>"
+                               data-cs="<%= user.cs %>"
+                               data-ds="<%= user.ds %>"
+                               data-us="<%= user.us %>"
+                               data-vm="<%= user.vm %>"
+                               data-cm="<%= user.cm %>"
+                               data-dm="<%= user.dm %>"
+                               data-um="<%= user.um %>"
                                href="#editUserModal"
                                class="open-EditUserDialog btn btn-info mr-1 float-right">
                                 <i class="fas fa-user-edit"></i> Edit
@@ -261,7 +293,7 @@
                                                         <div class="form-group">
                                                             <input class="form-group" type="radio" name="isAdmin"
                                                                    id="role1"
-                                                                   value="false" checked>
+                                                                   value="false">
                                                             <label class="form-group-label mb-lg-2" for="role1">
                                                                 User
                                                             </label>
@@ -283,46 +315,46 @@
                                                         <p class="text-dark"><strong>Subscriptions:</strong></p>
                                                         <div class="form-group">
                                                             <input class="form-group" type="checkbox" name="vs"
-                                                                   value="true" id="vs">
-                                                            <label for="vs">View</label>
+                                                                   value="true" id="vsm">
+                                                            <label for="vsm">View</label>
                                                         </div>
                                                         <div class="form-group">
                                                             <input class="form-group" type="checkbox" name="cs"
-                                                                   value="true" id="cs">
-                                                            <label for="cs">Create</label>
+                                                                   value="true" id="csm">
+                                                            <label for="csm">Create</label>
                                                         </div>
                                                         <div class="form-group">
                                                             <input class="form-group" type="checkbox" name="ds"
-                                                                   value="true" id="ds">
-                                                            <label for="ds">Delete</label>
+                                                                   value="true" id="dsm">
+                                                            <label for="dsm">Delete</label>
                                                         </div>
                                                         <div class="form-group">
                                                             <input class="form-group" type="checkbox" name="us"
-                                                                   value="true" id="us">
-                                                            <label for="us">Update</label>
+                                                                   value="true" id="usm">
+                                                            <label for="usm">Update</label>
                                                         </div>
                                                     </div>
                                                     <div class="col">
                                                         <p class="text-dark"><strong>Movies:</strong></p>
                                                         <div class="form-group">
                                                             <input class="form-group" type="checkbox" name="vm"
-                                                                   value="true" id="vm">
-                                                            <label for="vm">View</label>
+                                                                   value="true" id="vmm">
+                                                            <label for="vmm">View</label>
                                                         </div>
                                                         <div class="form-group">
                                                             <input class="form-group" type="checkbox" name="cm"
-                                                                   value="true" id="cm">
-                                                            <label for="cm">Create</label>
+                                                                   value="true" id="cmm">
+                                                            <label for="cmm">Create</label>
                                                         </div>
                                                         <div class="form-group">
                                                             <input class="form-group" type="checkbox" name="dm"
-                                                                   value="true" id="dm">
-                                                            <label for="dm">Delete</label>
+                                                                   value="true" id="dmm">
+                                                            <label for="dmm">Delete</label>
                                                         </div>
                                                         <div class="form-group">
                                                             <input class="form-group" type="checkbox" name="um"
-                                                                   value="true" id="um">
-                                                            <label for="um">Update</label>
+                                                                   value="true" id="umm">
+                                                            <label for="umm">Update</label>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -347,7 +379,8 @@
                                 <div class="modal-dialog" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="deleteUserModalLabel">Are you absolutely sure?</h5>
+                                            <h5 class="modal-title" id="deleteUserModalLabel">Are you absolutely
+                                                sure?</h5>
                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>

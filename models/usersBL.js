@@ -1,5 +1,5 @@
 const User = require('../models/userModel');
-const jsonDAL = require('../DAL/jsonDAL')
+const jsonDAL = require('../DAL/jsonDAL');
 
 exports.getAllUsers = async function () {
 
@@ -22,14 +22,14 @@ exports.getAllUsers = async function () {
             created: usersDataArr[y].created,
             isAdmin: x.isAdmin,
             isActivated: x.isActivated,
-            vs:  permissionsDataArr[y].vs,
-            cs:  permissionsDataArr[y].cs,
-            ds:  permissionsDataArr[y].ds,
-            us:  permissionsDataArr[y].us,
-            vm:  permissionsDataArr[y].vm,
-            cm:  permissionsDataArr[y].cm,
-            dm:  permissionsDataArr[y].dm,
-            um:  permissionsDataArr[y].um
+            vs: permissionsDataArr[y].vs,
+            cs: permissionsDataArr[y].cs,
+            ds: permissionsDataArr[y].ds,
+            us: permissionsDataArr[y].us,
+            vm: permissionsDataArr[y].vm,
+            cm: permissionsDataArr[y].cm,
+            dm: permissionsDataArr[y].dm,
+            um: permissionsDataArr[y].um
         })
     })
 
@@ -50,8 +50,10 @@ exports.getUser = function (id) {
 
 exports.updateUser = async function (req) {
     // Pull data from the front end form
-    const {userId, firstName, lastName, username, timeOut, isAdmin,
-        vs, cs, ds, us, vm, cm, dm, um} = req.body
+    const {
+        userId, firstName, lastName, username, timeOut, isAdmin,
+        vs, cs, ds, us, vm, cm, dm, um
+    } = req.body
 
     // Init. users array
     let usersJSON = await jsonDAL.getUsers();
@@ -64,6 +66,26 @@ exports.updateUser = async function (req) {
     // Check required fields not blank
     if (!firstName || !lastName || !username || !timeOut) {
         errors.push({msg: 'Please dont leave blank fields'});
+    }
+    // Check if username is unique
+    // let searchForUserInDB = await User.find({username})
+    // if (searchForUserInDB.length > 0) {
+    //     errors.push({msg: 'This username is already exists'});
+    // }
+    // Check if inputs got white spaces
+    if (hasWhiteSpace(username) || hasWhiteSpace(firstName) || hasWhiteSpace(lastName)) {
+        errors.push({msg: 'Please dont use white spaces in inputs'});
+    }
+    // Check if inputs got numbers
+    let hasNumber = /\d/;
+    if (hasNumber.test(firstName) || hasNumber.test(lastName)) {
+        errors.push({msg: 'Please dont use numbers in name fields'});
+    }
+    // Check if values too long
+    if (username.length > 12 || firstName.length > 12 || lastName.length > 12) {
+        errors.push({msg: 'Inputs must be shorter than 12 charters'});
+    }
+    if (errors.length > 0) {
         return errors;
     } else {
 
@@ -74,7 +96,7 @@ exports.updateUser = async function (req) {
         usersDataArr[index].timeOut = timeOut
         await jsonDAL.saveUser(usersJSON)
 
-        let findPerm = permissionsDataArr.find(perm => perm.id == userId)
+        let findPerm = permissionsDataArr.find(perm => perm.id === userId)
         let indexPerm = permissionsDataArr.indexOf(findPerm)
         permissionsDataArr[indexPerm].vs = (typeof vs != 'undefined')
         permissionsDataArr[indexPerm].cs = (typeof cs != 'undefined')
@@ -86,7 +108,7 @@ exports.updateUser = async function (req) {
         permissionsDataArr[indexPerm].um = (typeof um != 'undefined')
         await jsonDAL.savePermissions(permissionsJSON)
 
-         new Promise((resolve, reject) => {
+        new Promise((resolve, reject) => {
             User.findByIdAndUpdate(userId, {
                 username,
                 isAdmin
@@ -113,69 +135,49 @@ exports.addUser = async function (req) {
     let usersDataArr = usersJSON.usersData;
     let permissionsDataArr = permissionsJSON.permissionsData;
 
-    let errors = [];
 
-    // Check required fields not blank
-    if (!firstName || !lastName || !username || !timeOut) {
-        errors.push({msg: 'Please dont leave blank fields'});
-    }
-    // Check if username is unique
-    let searchForUser = await User.find({username})
-    if (searchForUser.length > 0) {
-        errors.push({msg: 'This username is already exists'});
-    }
-    // Check if inputs got white spaces
-    if (hasWhiteSpace(username) || hasWhiteSpace(firstName) || hasWhiteSpace(lastName)) {
-        errors.push({msg: 'Please dont use white spaces in inputs'});
-    }
-    // Check if inputs got numbers
-    let hasNumber = /\d/;
-    if (hasNumber.test(firstName) || hasNumber.test(lastName)) {
-        errors.push({msg: 'Please dont use numbers in name fields'});
-    }
-    // Check if values too long
-    if (username.length > 12 || firstName.length > 12 ||  lastName.length > 12) {
-        errors.push({msg: 'Inputs must be shorter than 12 charters'});
-    }
-    if (errors.length > 0) {
-        return errors;
-    } else {
-        // Create new User in DB
-        const newUser = new User({
-            username,
-            isAdmin,
-            isActivated: false
-        });
+    // Create new User in DB
+    const newUser = new User({
+        username,
+        isAdmin,
+        isActivated: false
+    });
 
-        await newUser.save()
+    // Save new user to mongoDB
+    await newUser.save()
+        .then(async (user) => {
+            // request a weekday along with a long date
+            let options = {timeZone: 'Asia/Jerusalem', hour12: false };
+            // Create user data in JSON
+            usersDataArr.push({
+                id: user._id,
+                firstName,
+                lastName,
+                timeOut,
+                created: new Date().toLocaleString('en-GB', options).replace(/T/, ' ').      // replace T with a space
+                    replace(/\..+/, '')     // delete the dot and everything after
+            })
 
-        usersDataArr.push({
-            id: newUser._id,
-            firstName,
-            lastName,
-            timeOut,
-            created: new Date().toLocaleString('en-US', {timeZone: 'Asia/Jerusalem'}).
-                     replace(/T/, ' ').      // replace T with a space
-                     replace(/\..+/, '')     // delete the dot and everything after
+            // Create new Permissions in JSON
+            permissionsDataArr.push({
+                id: newUser._id,
+                vs: (typeof vs != 'undefined'),
+                cs: (typeof cs != 'undefined'),
+                ds: (typeof ds != 'undefined'),
+                us: (typeof us != 'undefined'),
+                vm: (typeof vm != 'undefined'),
+                cm: (typeof cm != 'undefined'),
+                dm: (typeof dm != 'undefined'),
+                um: (typeof um != 'undefined')
+            })
+
+            // Save user data to JSON
+            await jsonDAL.saveUser(usersJSON)
+            // Save user permission to JSON
+            await jsonDAL.savePermissions(permissionsJSON)
+
         })
-
-        permissionsDataArr.push({
-            id: newUser._id,
-            vs: (typeof vs != 'undefined'),
-            cs: (typeof cs != 'undefined'),
-            ds: (typeof ds != 'undefined'),
-            us: (typeof us != 'undefined'),
-            vm: (typeof vm != 'undefined'),
-            cm: (typeof cm != 'undefined'),
-            dm: (typeof dm != 'undefined'),
-            um: (typeof um != 'undefined')
-        })
-
-        // Create new User in JSON
-        await jsonDAL.saveUser(usersJSON)
-        // Create new Permissions in JSON
-        await jsonDAL.savePermissions(permissionsJSON)
-    }
+        .catch(err => console.log(err))
 }
 
 
@@ -188,12 +190,12 @@ exports.deleteUser = async function (id) {
 
     let usersDB = await User.findByIdAndDelete(id)
 
-    let findUser = usersDataArr.find(user => user.id == id)
-    let findPermissions= permissionsDataArr.find(perm => perm.id == id)
+    let findUser = usersDataArr.find(user => user.id === id)
+    let findPermissions = permissionsDataArr.find(perm => perm.id === id)
     let indexUser = usersDataArr.indexOf(findUser)
-    let indexPerm= permissionsDataArr.indexOf(findPermissions)
+    let indexPerm = permissionsDataArr.indexOf(findPermissions)
     usersDataArr.splice(indexUser, 1)
-    permissionsDataArr.splice(indexPerm,1)
+    permissionsDataArr.splice(indexPerm, 1)
     await jsonDAL.saveUser(usersJSON)
     await jsonDAL.savePermissions(permissionsJSON)
 

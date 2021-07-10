@@ -3,7 +3,8 @@ var router = express.Router();
 
 const bcrypt = require('bcryptjs');
 const User = require('../models/userModel');
-const passport = require('passport');
+
+const utils = require('../lib/utils');
 
 // Login page
 router.get('/', function (req, res, next) {
@@ -33,12 +34,6 @@ router.post('/registerForm', async function (req, res, next) {
     // Check pass length
     if (password.length < 6) {
         errors.push({msg: 'Password should be at least 6 characters'})
-    }
-
-    // Check if username is unique
-    let searchForUser = await User.find({username})
-    if (searchForUser.length > 0) {
-        errors.push({msg: 'This username is already exists'});
     }
 
     if (errors.length > 0) {
@@ -80,6 +75,7 @@ router.post('/registerForm', async function (req, res, next) {
                     user.isAdmin = false;
                     user.isActivated = true;
 
+
                     // Hash Password
                     bcrypt.genSalt(10, (err, salt) =>
                         bcrypt.hash(user.password, salt, (err, hash) => {
@@ -101,13 +97,42 @@ router.post('/registerForm', async function (req, res, next) {
 });
 
 // Login handler
-router.post('/signIn', async function (req, res, next) {
+router.post('/signIn', function (req, res, next) {
+    const {username, password, password2} = req.body
+    let errors = [];
+    User.findOne({username: req.body.username})
+        .then((user) => {
+            if (!user) {
+                errors.push({msg: 'That username is not registered'})
+                res.render('login', {errors})
+            }
 
-    passport.authenticate('local', {
-        successRedirect: '/menu',
-        failureRedirect: '/',
-        failureFlash: true
-    })(req, res, next)
+            if (!user.isActivated) {
+                errors.push({msg: 'That username is not activated'})
+                res.render('login', {errors})
+            }
+
+            // Match the Password
+            bcrypt.compare(password, user.password, (err, isMatch) => {
+                if (err) throw  err;
+
+                if (isMatch) {
+                    const expirationSeconds = 60 * 60 * 24 * 7; // one week
+                    const cookieExpiration = Date.now() + expirationSeconds * 1000;
+                    let token = utils.issueJWT(user)
+                    // Send Set-Cookie header
+                    res.cookie('jwt', token, {expires: new Date(cookieExpiration), httpOnly: true});
+                    res.redirect('/menu');
+                } else {
+                    errors.push({msg: 'Password incorrect'})
+                    res.render('login', {errors})
+                }
+            })
+
+        });
+
 });
+
+
 
 module.exports = router;
