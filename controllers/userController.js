@@ -10,9 +10,8 @@ const usersBL = require('../models/usersBL')
 // Users Console
 router.get('/', passport.authenticate('jwt', { session: false }), async function (req, res, next) {
     let obj = utils.getPayloadFromToken(req)
-    console.log(obj.isAdmin)
     let userList = await usersBL.getAllUsers();
-    res.render('manageUsers', {userList, name: obj.username, obj});
+    res.render('manageUsers', {userList, name: obj.username, admin: obj.isAdmin});
 });
 
 // Add User
