@@ -10,8 +10,9 @@ const usersBL = require('../models/usersBL')
 // Users Console
 router.get('/', passport.authenticate('jwt', { session: false }), async function (req, res, next) {
     let obj = utils.getPayloadFromToken(req)
+    console.log(obj.isAdmin)
     let userList = await usersBL.getAllUsers();
-    res.render('manageUsers', {userList, name: obj.username});
+    res.render('manageUsers', {userList, name: obj.username, obj});
 });
 
 // Add User
@@ -23,10 +24,7 @@ router.get('/addUser', passport.authenticate('jwt', { session: false }), functio
 // Add User Handler
 router.post('/addUserForm', passport.authenticate('jwt', { session: false }), async function (req, res, next) {
     // Pull data from the front end form
-    const {
-        firstName, lastName, username, timeOut, isAdmin,
-        vs, cs, ds, us, vm, cm, dm, um
-    } = req.body;
+    const {firstName, lastName, username, timeOut, email} = req.body;
 
     let errors = [];
 
@@ -40,10 +38,17 @@ router.post('/addUserForm', passport.authenticate('jwt', { session: false }), as
         errors.push({msg: 'This username is already exists'});
     }
 
+    // Check if email is unique
+    let searchForEmailInDB = await User.find({email})
+    if (searchForEmailInDB.length > 0) {
+        errors.push({msg: 'This email is already exists'});
+    }
+
     // Check if inputs got white spaces
     if (utils.hasWhiteSpace(username) ||
         utils.hasWhiteSpace(firstName) ||
-        utils.hasWhiteSpace(lastName)) {
+        utils.hasWhiteSpace(lastName) ||
+        utils.hasWhiteSpace(email) ) {
         errors.push({msg: 'Please dont use white spaces in inputs'});
     }
 
@@ -53,10 +58,14 @@ router.post('/addUserForm', passport.authenticate('jwt', { session: false }), as
         errors.push({msg: 'Please dont use numbers in name fields'});
     }
     // Check if values too long
-    if (username.length > 12 || firstName.length > 12 || lastName.length > 12) {
-        errors.push({msg: 'Inputs must be shorter than 12 charters'});
+    if (username.length > 18 || firstName.length > 18 || lastName.length > 18) {
+        errors.push({msg: 'Inputs must be shorter than 18 charters'});
     }
 
+    // Check if email is too long
+    if (email.length > 30) {
+        errors.push({msg: 'Email must be shorter than 30 charters'});
+    }
 
     if (errors.length > 0) {
         res.render('addUser', {errors})
@@ -83,8 +92,8 @@ router.post('/editUserForm', passport.authenticate('jwt', { session: false }), a
 
 // Delete User Handler
 router.post('/deleteUserForm', passport.authenticate('jwt', { session: false }), async function (req, res, next) {
-    let status = await usersBL.deleteUser(req.body.userId);
-    req.flash('success_msg', status);
+    await usersBL.deleteUser(req.body.userId);
+    req.flash('success_msg', `User ${req.body.username} deleted successfully`);
     res.redirect('/menu/manage');
 });
 

@@ -9,11 +9,17 @@ let UsersSchema = new mongoose.Schema({
     password: {
         type: String
     },
+    email: {
+        type: String,
+        unique: true
+    },
     isAdmin: {
-        type: Boolean
+        type: Boolean,
+        default: false
     },
     isActivated: {
-        type: Boolean
+        type: Boolean,
+        default: false
     }
 }, {collection: 'users'})
 

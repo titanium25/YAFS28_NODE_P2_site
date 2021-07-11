@@ -1,5 +1,8 @@
 const User = require('../models/userModel');
+const Token = require('../models/tokenModel');
 const jsonDAL = require('../DAL/jsonDAL');
+const sendEmail = require("../lib/emailSender");
+const crypto = require('crypto');
 
 exports.getAllUsers = async function () {
 
@@ -18,6 +21,7 @@ exports.getAllUsers = async function () {
             firstName: usersDataArr[y].firstName,
             lastName: usersDataArr[y].lastName,
             username: x.username,
+            email: x.email,
             timeOut: usersDataArr[y].timeOut,
             created: usersDataArr[y].created,
             isAdmin: x.isAdmin,
@@ -125,7 +129,7 @@ exports.updateUser = async function (req) {
 exports.addUser = async function (req) {
     // Pull data from the front end form
     const {
-        firstName, lastName, username, timeOut, isAdmin,
+        firstName, lastName, username, timeOut, isAdmin, email,
         vs, cs, ds, us, vm, cm, dm, um
     } = req.body;
 
@@ -135,49 +139,59 @@ exports.addUser = async function (req) {
     let usersDataArr = usersJSON.usersData;
     let permissionsDataArr = permissionsJSON.permissionsData;
 
-
     // Create new User in DB
-    const newUser = new User({
+    let user = await new User({
         username,
-        isAdmin,
-        isActivated: false
-    });
+        email,
+        isAdmin
+    }).save();
 
-    // Save new user to mongoDB
-    await newUser.save()
-        .then(async (user) => {
-            // request a weekday along with a long date
-            let options = {timeZone: 'Asia/Jerusalem', hour12: false };
-            // Create user data in JSON
-            usersDataArr.push({
-                id: user._id,
-                firstName,
-                lastName,
-                timeOut,
-                created: new Date().toLocaleString('en-GB', options).replace(/T/, ' ').      // replace T with a space
-                    replace(/\..+/, '')     // delete the dot and everything after
-            })
+    // Request a weekday along with a long date
+    let options = {timeZone: 'Asia/Jerusalem', hour12: false};
+    // Create user data in JSON
+    usersDataArr.push({
+        id: user._id,
+        firstName,
+        lastName,
+        timeOut,
+        created: new Date().toLocaleString('en-GB', options).replace(/T/, ' ').      // replace T with a space
+            replace(/\..+/, '')     // delete the dot and everything after
+    })
 
-            // Create new Permissions in JSON
-            permissionsDataArr.push({
-                id: newUser._id,
-                vs: (typeof vs != 'undefined'),
-                cs: (typeof cs != 'undefined'),
-                ds: (typeof ds != 'undefined'),
-                us: (typeof us != 'undefined'),
-                vm: (typeof vm != 'undefined'),
-                cm: (typeof cm != 'undefined'),
-                dm: (typeof dm != 'undefined'),
-                um: (typeof um != 'undefined')
-            })
+    // Create new Permissions in JSON
+    permissionsDataArr.push({
+        id: user._id,
+        vs: (typeof vs != 'undefined'),
+        cs: (typeof cs != 'undefined'),
+        ds: (typeof ds != 'undefined'),
+        us: (typeof us != 'undefined'),
+        vm: (typeof vm != 'undefined'),
+        cm: (typeof cm != 'undefined'),
+        dm: (typeof dm != 'undefined'),
+        um: (typeof um != 'undefined')
+    })
 
-            // Save user data to JSON
-            await jsonDAL.saveUser(usersJSON)
-            // Save user permission to JSON
-            await jsonDAL.savePermissions(permissionsJSON)
+    // Create verification token for new user
+    let token = await new Token({
+        userId: user._id,
+        token: crypto.randomBytes(32).toString("hex")
+    }).save();
 
-        })
-        .catch(err => console.log(err))
+    // Send email
+    const message = `<h1>Hello ${user.username}</h1>
+                     <h2>Welcome to YAFS28:P2 project</h2>
+                        <p>
+                            Admin register for you this account. Please click on link below to activate your profile.
+                        </p>
+                     Press <a href=${process.env.BASE_URL}/user/verify/${user._id}/${token.token}> here </a>
+                     to verify your email.`;
+    await sendEmail(email, 'Verify Email', message);
+
+    // Save user data to JSON
+    await jsonDAL.saveUser(usersJSON)
+    // Save user permission to JSON
+    await jsonDAL.savePermissions(permissionsJSON)
+
 }
 
 
@@ -188,7 +202,8 @@ exports.deleteUser = async function (id) {
     let usersDataArr = usersJSON.usersData;
     let permissionsDataArr = permissionsJSON.permissionsData;
 
-    let usersDB = await User.findByIdAndDelete(id)
+    await User.findByIdAndDelete(id).catch(err => console.log(err))
+    await Token.deleteOne({userId: user._id}).catch(err => console.log(err))
 
     let findUser = usersDataArr.find(user => user.id === id)
     let findPermissions = permissionsDataArr.find(perm => perm.id === id)
@@ -199,7 +214,7 @@ exports.deleteUser = async function (id) {
     await jsonDAL.saveUser(usersJSON)
     await jsonDAL.savePermissions(permissionsJSON)
 
-    return `User ${usersDB.username} deleted successfully`
+
 }
 
 function hasWhiteSpace(s) {

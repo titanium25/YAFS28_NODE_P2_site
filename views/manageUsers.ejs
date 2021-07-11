@@ -113,6 +113,7 @@
                         <div class="card-body">
                             <strong>Name:</strong> <%= user.firstName %> <%= user.lastName %><br>
                             <strong>Username:</strong> <%= user.username %><br>
+                            <strong>Email:</strong> <%= user.email %><br>
                             <strong>Date Created:</strong> <%= user.created %><br>
                             <strong>Session Time Out:</strong>
                             <% if(user.isAdmin) { %>
@@ -392,6 +393,7 @@
                                                     type="text"
                                                     name="confirm"
                                                     class="form-control"
+                                                    placeholder="Enter confirmation here"
                                             />
                                         </div>
                                         <div class="modal-footer">
@@ -411,8 +413,6 @@
                 </div>
             <% }) %>
         </div>
-
-        <a href="/menu" class="btn btn-secondary mt-2"><i class="fas fa-undo-alt"></i> Back to menu</a>
     </div>
 </div>
 

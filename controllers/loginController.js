@@ -3,6 +3,7 @@ var router = express.Router();
 
 const bcrypt = require('bcryptjs');
 const User = require('../models/userModel');
+const Token = require('../models/tokenModel');
 
 const utils = require('../lib/utils');
 const jsonDAL = require('../DAL/jsonDAL');
@@ -12,9 +13,23 @@ router.get('/', function (req, res, next) {
     res.render('login');
 });
 
-// Register page
+// Activation page
 router.get('/register', function (req, res, next) {
     res.render('register');
+});
+
+// Verify page
+router.get('/user/verify/:id/:token', async function (req, res, next) {
+    const user = await User.findOne({_id: req.params.id});
+    const token = await Token.findOne(({userId: user._id, token: req.params.token}));
+    if(!user || !token) {
+        req.flash('error_msg', 'Invalid link')
+        res.redirect('/');
+    } else {
+        let errors = [];
+        errors.push({msg: 'Email verified successfully, please fill the form to activate the account'});
+        res.render('register', {errors, username: user.username});
+    }
 });
 
 // Register Handler
@@ -47,7 +62,7 @@ router.post('/registerForm', async function (req, res, next) {
     } else {
         // Validation passed
         User.findOne({username: username})
-            .then(user => {
+            .then(async user => {
                 // Check if Username is EXISTS
                 if (!user) {
                     // Error - Username NOT Exists
@@ -73,9 +88,9 @@ router.post('/registerForm', async function (req, res, next) {
                     }
                     // Mongoose UPDATE existing document
                     user.password = password;
-                    user.isAdmin = false;
                     user.isActivated = true;
-
+                    // Delete token after activation
+                    await Token.deleteOne({userId: user._id})
 
                     // Hash Password
                     bcrypt.genSalt(10, (err, salt) =>
