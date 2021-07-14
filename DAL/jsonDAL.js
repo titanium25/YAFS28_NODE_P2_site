@@ -2,6 +2,8 @@ const jsonFile = require("jsonfile");
 
 const fileNameUsers = __dirname + "/users.json";
 const filePermissions = __dirname + "/permissions.json";
+const fileNameGenres = __dirname +  "/genresList.json";
+
 
 exports.getUsers = () => {
     return new Promise((resolve, reject) => {
@@ -50,3 +52,14 @@ exports.savePermissions = (obj) => {
         })
     })
 }
+
+exports.getGenres = () => {
+    return new Promise((resolve, reject) => {
+        jsonFile.readFile(fileNameGenres, (err, res) => {
+            if (err) {
+                reject(err);
+            }
+            resolve(res);
+        });
+    });
+};

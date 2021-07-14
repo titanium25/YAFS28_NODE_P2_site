@@ -22,6 +22,11 @@ exports.getMovieList = async () => {
         image: movie.image
     }));
 }
+
+exports.addMovie = async (req) => {
+
+}
+
 exports.permissions = async (id) => {
     let permissionsJSON = await jsonDAL.getPermissions();
     let permissionsDataArr = permissionsJSON.permissionsData;
@@ -36,4 +41,9 @@ exports.findMovie = async (req) => {
     return allMoviesAPI.data.filter(movie =>
         (movie.name.toLowerCase().includes(title.toLowerCase()) || title.toLowerCase() === '')
     )
+}
+
+exports.getGenres = async function () {
+    const response = await jsonDAL.getGenres();
+    return response.genres.sort()
 }

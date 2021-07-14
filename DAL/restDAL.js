@@ -1,6 +1,6 @@
 const axios = require('axios')
 
-const url = "http://localhost:8000/api/movies";
+const url = "http://localhost:2020/api/movies";
 
 exports.getAllMovies = function () {
     return axios.get(url)
