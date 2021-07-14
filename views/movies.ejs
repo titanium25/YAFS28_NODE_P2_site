@@ -2,17 +2,47 @@
     <div class="card-body">
 
         <h1 class="text-center mb-3">
-            <i class="fas fa-video"></i>  Movies
+            <i class="fas fa-video"></i> Movies
         </h1>
         <% include ./partials/messages.ejs %>
 
-        <a href="/menu/movies" class="btn btn-secondary mr-1 disabled">
-            <i class="fas fa-users"></i> All Movies
-        </a>
-        <a href="/menu/movies/addMovies" class="btn btn-secondary">
-            <i class="fas fa-user-plus"></i> Add Movie
-        </a>
+        <form class="form-inline" action="/menu/movies/" method="POST">
 
+            <a href="/menu/movies" class="btn btn-secondary mr-1 disabled">
+                <i class="fas fa-list"></i> All Movies
+            </a>
+
+            <a href="/menu/movies/addMovies" class="btn btn-secondary mr-1 <% if(!permissions.cm){ %>disabled<% } %>">
+                <i class="fas fa-plus-circle"></i> Add Movie
+            </a>
+
+
+            <input class="form-control mr-sm-2 input-sm w-25 pull-right " type="search" name="title" placeholder="Find movie"
+                   aria-label="Search">
+            <button class="btn btn-outline-primary pull-right" type="submit">Search</button>
+        </form>
+
+        <% movies.forEach(function(m) { %>
+            <div class="card flex-row flex-wrap mt-3">
+                <div class="card-header border-0 w-20">
+                    <img style="max-width: 80%;" src="<%= m.image.medium %>">
+                </div>
+                <div class="card-block px-2 mt-3">
+                    <h4 class="card-title"><%= m.name %>, <%= m.premiered.substring(0, 4) %></h4>
+                    <p class="card-text">Genres: <%= m.genres %></p>
+                    <button type="button"
+                            class="btn btn-danger mr-1 float-right <% if(!permissions.dm){ %>disabled<% } %>">
+                        Delete
+                    </button>
+                    <button type="button"
+                            class="btn btn-info mr-1 float-right <% if(!permissions.um){ %>disabled<% } %>">
+                        Edit
+                    </button>
+                </div>
+
+            </div>
+
+        <% }) %>
 
     </div>
 </div>

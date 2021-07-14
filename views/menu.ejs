@@ -8,7 +8,9 @@
         <div class="col-md-12 text-center">
         <a href="/menu/movies" class="btn mr-1">Movies</a>
         <a href="/menu/subscriptions" class="btn mr-1">Subscriptions</a>
+            <% if(admin) { %>
         <a href="/menu/manage" class="btn mr-1">Users Management Console</a>
+            <% } %>
         </div>
     </div>
 </div>

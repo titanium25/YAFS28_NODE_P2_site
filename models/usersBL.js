@@ -54,81 +54,7 @@ exports.getUser = function (id) {
 
 exports.updateUser = async function (req) {
     // Pull data from the front end form
-    const {
-        userId, firstName, lastName, username, timeOut, isAdmin,
-        vs, cs, ds, us, vm, cm, dm, um
-    } = req.body
-
-    // Init. users array
-    let usersJSON = await jsonDAL.getUsers();
-    let permissionsJSON = await jsonDAL.getPermissions()
-    let usersDataArr = usersJSON.usersData;
-    let permissionsDataArr = permissionsJSON.permissionsData;
-
-    let errors = [];
-
-    // Check required fields not blank
-    if (!firstName || !lastName || !username || !timeOut) {
-        errors.push({msg: 'Please dont leave blank fields'});
-    }
-    // Check if username is unique
-    // let searchForUserInDB = await User.find({username})
-    // if (searchForUserInDB.length > 0) {
-    //     errors.push({msg: 'This username is already exists'});
-    // }
-    // Check if inputs got white spaces
-    if (hasWhiteSpace(username) || hasWhiteSpace(firstName) || hasWhiteSpace(lastName)) {
-        errors.push({msg: 'Please dont use white spaces in inputs'});
-    }
-    // Check if inputs got numbers
-    let hasNumber = /\d/;
-    if (hasNumber.test(firstName) || hasNumber.test(lastName)) {
-        errors.push({msg: 'Please dont use numbers in name fields'});
-    }
-    // Check if values too long
-    if (username.length > 12 || firstName.length > 12 || lastName.length > 12) {
-        errors.push({msg: 'Inputs must be shorter than 12 charters'});
-    }
-    if (errors.length > 0) {
-        return errors;
-    } else {
-
-        let findUser = usersDataArr.find(user => user.id == userId)
-        let index = usersDataArr.indexOf(findUser)
-        usersDataArr[index].firstName = firstName
-        usersDataArr[index].lastName = lastName
-        usersDataArr[index].timeOut = timeOut
-        await jsonDAL.saveUser(usersJSON)
-
-        let findPerm = permissionsDataArr.find(perm => perm.id === userId)
-        let indexPerm = permissionsDataArr.indexOf(findPerm)
-        permissionsDataArr[indexPerm].vs = (typeof vs != 'undefined')
-        permissionsDataArr[indexPerm].cs = (typeof cs != 'undefined')
-        permissionsDataArr[indexPerm].ds = (typeof ds != 'undefined')
-        permissionsDataArr[indexPerm].us = (typeof us != 'undefined')
-        permissionsDataArr[indexPerm].vm = (typeof vm != 'undefined')
-        permissionsDataArr[indexPerm].cm = (typeof cm != 'undefined')
-        permissionsDataArr[indexPerm].dm = (typeof dm != 'undefined')
-        permissionsDataArr[indexPerm].um = (typeof um != 'undefined')
-        await jsonDAL.savePermissions(permissionsJSON)
-
-        new Promise((resolve, reject) => {
-            User.findByIdAndUpdate(userId, {
-                username,
-                isAdmin
-            }, function (err) {
-                if (err) {
-                    reject(err)
-                }
-            })
-        });
-    }
-}
-
-// Add new User to DB and JSON file
-exports.addUser = async function (req) {
-    // Pull data from the front end form
-    const {
+    let {
         firstName, lastName, username, timeOut, isAdmin, email,
         vs, cs, ds, us, vm, cm, dm, um
     } = req.body;
@@ -139,12 +65,60 @@ exports.addUser = async function (req) {
     let usersDataArr = usersJSON.usersData;
     let permissionsDataArr = permissionsJSON.permissionsData;
 
-    // Create new User in DB
-    let user = await new User({
+    let findUser = usersDataArr.find(user => user.id === req.body.userId)
+    let index = usersDataArr.indexOf(findUser)
+
+    usersDataArr[index].firstName = firstName
+    usersDataArr[index].lastName = lastName
+    usersDataArr[index].timeOut = timeOut
+    await jsonDAL.saveUser(usersJSON)
+
+    let findPerm = permissionsDataArr.find(perm => perm.id === req.body.userId)
+    let indexPerm = permissionsDataArr.indexOf(findPerm)
+    permissionsDataArr[indexPerm].vs = (typeof vs != 'undefined')
+    permissionsDataArr[indexPerm].cs = (typeof cs != 'undefined')
+    permissionsDataArr[indexPerm].ds = (typeof ds != 'undefined')
+    permissionsDataArr[indexPerm].us = (typeof us != 'undefined')
+    permissionsDataArr[indexPerm].vm = (typeof vm != 'undefined')
+    permissionsDataArr[indexPerm].cm = (typeof cm != 'undefined')
+    permissionsDataArr[indexPerm].dm = (typeof dm != 'undefined')
+    permissionsDataArr[indexPerm].um = (typeof um != 'undefined')
+    await jsonDAL.savePermissions(permissionsJSON)
+
+
+    await User.findByIdAndUpdate(req.body.userId, {
         username,
-        email,
         isAdmin
-    }).save();
+    })
+
+}
+
+// Add new User to DB and JSON
+exports.addUser = async function (req) {
+    // Pull data from the front end form
+    let {
+        firstName, lastName, username, timeOut, isAdmin, email,
+        vs, cs, ds, us, vm, cm, dm, um
+    } = req.body;
+
+    // Init. users array
+    let usersJSON = await jsonDAL.getUsers();
+    let permissionsJSON = await jsonDAL.getPermissions()
+    let usersDataArr = usersJSON.usersData;
+    let permissionsDataArr = permissionsJSON.permissionsData;
+
+    let obj = {}
+    if (email === '') {
+        obj.username = username,
+            obj.isAdmin = isAdmin
+    } else {
+        obj.username = username,
+            obj.email = email,
+            obj.isAdmin = isAdmin
+    }
+
+    // Create new User in DB
+    let user = await new User(obj).save();
 
     // Request a weekday along with a long date
     let options = {timeZone: 'Asia/Jerusalem', hour12: false};
@@ -171,21 +145,27 @@ exports.addUser = async function (req) {
         um: (typeof um != 'undefined')
     })
 
-    // Create verification token for new user
-    let token = await new Token({
-        userId: user._id,
-        token: crypto.randomBytes(32).toString("hex")
-    }).save();
+    if (email) {
+        // Create verification token for new user
+        let token = await new Token({
+            userId: user._id,
+            token: crypto.randomBytes(32).toString("hex")
+        }).save();
 
-    // Send email
-    const message = `<h1>Hello ${user.username}</h1>
-                     <h2>Welcome to YAFS28:P2 project</h2>
-                        <p>
-                            Admin register for you this account. Please click on link below to activate your profile.
-                        </p>
-                     Press <a href=${process.env.BASE_URL}/user/verify/${user._id}/${token.token}> here </a>
-                     to verify your email.`;
-    await sendEmail(email, 'Verify Email', message);
+        // Send email
+        const message = `<h1>Hello ${user.username}</h1>
+                         <h2>Welcome to YAFS28:P2 project</h2>
+                         <p>
+                            Admin register for you this account. 
+                            Please click on link below to activate your profile.
+                         </p>
+                          Press <a href=${process.env.BASE_URL}/user/verify/${user._id}/${token.token}>
+                          here 
+                          </a>
+                          to verify your email.`;
+        await sendEmail(email, 'Verify Email', message);
+    }
+
 
     // Save user data to JSON
     await jsonDAL.saveUser(usersJSON)
@@ -202,8 +182,11 @@ exports.deleteUser = async function (id) {
     let usersDataArr = usersJSON.usersData;
     let permissionsDataArr = permissionsJSON.permissionsData;
 
+    let u = await User.findById(id);
+    let un = u.username;
+
     await User.findByIdAndDelete(id).catch(err => console.log(err))
-    await Token.deleteOne({userId: user._id}).catch(err => console.log(err))
+    await Token.deleteOne({userId: id}).catch(err => console.log(err))
 
     let findUser = usersDataArr.find(user => user.id === id)
     let findPermissions = permissionsDataArr.find(perm => perm.id === id)
@@ -214,9 +197,7 @@ exports.deleteUser = async function (id) {
     await jsonDAL.saveUser(usersJSON)
     await jsonDAL.savePermissions(permissionsJSON)
 
-
+    return un;
 }
 
-function hasWhiteSpace(s) {
-    return s.indexOf(' ') >= 0;
-}
+

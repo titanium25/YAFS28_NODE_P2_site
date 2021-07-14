@@ -5,17 +5,33 @@ const utils = require('../lib/utils');
 const moviesBL = require('../models/moviesBL');
 
 // Menu page
-router.get('/', passport.authenticate('jwt', { session: false }), function (req, res, next) {
+router.get('/', passport.authenticate('jwt', { session: false }), async function (req, res, next) {
     let obj = utils.getPayloadFromToken(req);
-    res.render('menu', {name: obj.username});
+    let permissions = await moviesBL.permissions(obj.sub);
+    res.render('menu', {name: obj.username, admin: obj.isAdmin, permissions});
 });
 
 // Movies page
-router.get('/movies', passport.authenticate('jwt', { session: false }), function (req, res, next) {
-    let movies = moviesBL.getMovies();
-    console.log(movies)
+router.get('/movies', passport.authenticate('jwt', { session: false }), async function (req, res, next) {
+    let movies = await moviesBL.getMovieList()
     let obj = utils.getPayloadFromToken(req);
-    res.render('movies', {movies, name: obj.username});
+    let permissions = await moviesBL.permissions(obj.sub);
+    res.render('movies', {movies, name: obj.username, admin: obj.isAdmin, permissions});
+});
+
+// Add movie page
+router.get('/', passport.authenticate('jwt', { session: false }), async function (req, res, next) {
+    let obj = utils.getPayloadFromToken(req);
+    let permissions = await moviesBL.permissions(obj.sub);
+    res.render('menu', {name: obj.username, admin: obj.isAdmin, permissions});
+});
+
+// Movies page
+router.post('/movies', passport.authenticate('jwt', { session: false }), async function (req, res, next) {
+    let movies = await moviesBL.findMovie(req)
+    let obj = utils.getPayloadFromToken(req);
+    let permissions = await moviesBL.permissions(obj.sub);
+    res.render('movies', {movies, name: obj.username, admin: obj.isAdmin, permissions});
 });
 
 // Logout Handle

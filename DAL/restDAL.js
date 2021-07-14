@@ -1,6 +1,6 @@
 const axios = require('axios')
 
-const url = "https://api.tvmaze.com/shows";
+const url = "http://localhost:8000/api/movies";
 
 exports.getAllMovies = function () {
     return axios.get(url)

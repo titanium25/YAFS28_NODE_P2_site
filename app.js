@@ -4,6 +4,7 @@ const path = require('path');
 const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 
+
 const expressLayouts = require('express-ejs-layouts');
 const passport = require('passport');
 const session = require('express-session');
@@ -17,11 +18,13 @@ const userController = require('./controllers/userController');
  * -------------- GENERAL SETUP ----------------
  */
 
-// Gives us access to variables set in the .env file via `process.env.VARIABLE_NAME` syntax
+// Gives us access to variables set in the ..env file via `process..env.VARIABLE_NAME` syntax
 require('dotenv').config();
 
 // Create the Express application
 var app = express();
+var cors = require('cors')
+app.use(cors())
 
 // Configures the database and opens a global connection that can be used in any module with `mongoose.connection`
 require('./config/database');
@@ -43,8 +46,8 @@ app.use(express.urlencoded({extended: true}));
 // Express Sessions
 app.use(session({
   secret: 'secret',
-  resave: true,
-  saveUninitialized: true,
+  resave: false,
+  saveUninitialized: false,
   cookie: { maxAge: 60000 }
 }));
 
@@ -74,10 +77,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 /**
  * -------------- ROUTES ----------------
  */
-
 app.use('/', loginController);
 app.use('/menu', movieController);
 app.use('/menu/manage', userController);
+
 
 /**
  * -------------- SERVER ----------------

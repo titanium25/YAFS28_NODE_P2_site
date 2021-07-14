@@ -10,8 +10,7 @@ let UsersSchema = new mongoose.Schema({
         type: String
     },
     email: {
-        type: String,
-        unique: true
+        type: String
     },
     isAdmin: {
         type: Boolean,

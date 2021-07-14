@@ -26,9 +26,9 @@ router.get('/user/verify/:id/:token', async function (req, res, next) {
         req.flash('error_msg', 'Invalid link')
         res.redirect('/');
     } else {
-        let errors = [];
-        errors.push({msg: 'Email verified successfully, please fill the form to activate the account'});
-        res.render('register', {errors, username: user.username});
+        let success = [];
+        success.push({msg: 'Email verified successfully, please fill the form to activate the account'});
+        res.render('register', {success, username: user.username});
     }
 });
 
@@ -116,40 +116,49 @@ router.post('/registerForm', async function (req, res, next) {
 router.post('/signIn', function (req, res, next) {
     const {username, password, password2} = req.body
     let errors = [];
-    User.findOne({username: req.body.username})
-        .then((user) => {
-            if (!user) {
-                errors.push({msg: 'That username is not registered'})
-                res.render('login', {errors})
-            }
 
-            if (!user.isActivated) {
-                errors.push({msg: 'That username is not activated'})
-                res.render('login', {errors})
-            }
-
-            // Match the Password
-            bcrypt.compare(password, user.password, async (err, isMatch) => {
-                if (err) throw  err;
-
-                if (isMatch) {
-                    let usersJSON = await jsonDAL.getUsers();
-                    let usersDataArr = usersJSON.usersData;
-
-                    let findUser = usersDataArr.find(u => u.id === user.id)
-                    // const expirationSeconds = 60 * 60 * 24 * 7; // one week
-                    const cookieExpiration = Date.now() + findUser.timeOut * 1000;
-                    let token = utils.issueJWT(user)
-                    // Send Set-Cookie header
-                    res.cookie('jwt', token, {expires: new Date(cookieExpiration), httpOnly: true});
-                    res.redirect('/menu');
-                } else {
-                    errors.push({msg: 'Password incorrect'})
+    if(!username || !password) {
+        errors.push({msg: "Please fill in username and password"})
+        res.render('login', {errors})
+    } else {
+        User.findOne({username: req.body.username, isActivated : true})
+            .then((user) => {
+                if (!user) {
+                    errors.push({msg: 'That username is not registered or activated'})
                     res.render('login', {errors})
-                }
-            })
+                } else {
+                    // if (!user.isActivated) {
+                    //     errors.push({msg: 'That username is not activated'})
+                    //     res.render('login', {errors})
+                    // }
+                    // Match the Password
+                    bcrypt.compare(password, user.password, async (err, isMatch) => {
+                        if (err) throw  err;
 
-        });
+                        if (isMatch) {
+                            let usersJSON = await jsonDAL.getUsers();
+                            let usersDataArr = usersJSON.usersData;
+
+                            let findUser = usersDataArr.find(u => u.id === user.id)
+                            // const expirationSeconds = 60 * 60 * 24 * 7; // one week
+                            const cookieExpiration = Date.now() + findUser.timeOut * 1000;
+                            let token = utils.issueJWT(user)
+                            // Send Set-Cookie header
+                            res.cookie('jwt', token, {expires: new Date(cookieExpiration), httpOnly: true});
+                            res.redirect('/menu');
+                        } else {
+                            errors.push({msg: 'Password incorrect'})
+                            res.render('login', {errors})
+                        }
+                    })
+                }
+
+
+
+            });
+    }
+
+
 
 });
 

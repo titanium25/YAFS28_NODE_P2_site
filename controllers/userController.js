@@ -5,30 +5,33 @@ const passport = require('passport');
 
 const utils = require('../lib/utils');
 const usersBL = require('../models/usersBL')
+const jsonDAL = require('../DAL/jsonDAL');
+
 
 
 // Users Console
-router.get('/', passport.authenticate('jwt', { session: false }), async function (req, res, next) {
+router.get('/', passport.authenticate('jwt', {session: false}), async function (req, res, next) {
     let obj = utils.getPayloadFromToken(req)
     let userList = await usersBL.getAllUsers();
     res.render('manageUsers', {userList, name: obj.username, admin: obj.isAdmin});
 });
 
 // Add User
-router.get('/addUser', passport.authenticate('jwt', { session: false }), function (req, res, next) {
+router.get('/addUser', passport.authenticate('jwt', {session: false}), function (req, res, next) {
     let obj = utils.getPayloadFromToken(req)
-    res.render('addUser', {name: obj.username});
+    res.render('addUser', {name: obj.username, admin: obj.isAdmin});
 });
 
 // Add User Handler
-router.post('/addUserForm', passport.authenticate('jwt', { session: false }), async function (req, res, next) {
+router.post('/addUserForm', async function (req, res, next) {
     // Pull data from the front end form
     const {firstName, lastName, username, timeOut, email} = req.body;
+    let obj = utils.getPayloadFromToken(req)
+    let errors = []
 
-    let errors = [];
 
     // Check required fields not blank
-    if (!firstName || !lastName || !username || !timeOut) {
+    if (!firstName || !lastName || !username || !timeOut || !email) {
         errors.push({msg: 'Please dont leave blank fields'});
     }
     // Check if username is unique
@@ -47,7 +50,7 @@ router.post('/addUserForm', passport.authenticate('jwt', { session: false }), as
     if (utils.hasWhiteSpace(username) ||
         utils.hasWhiteSpace(firstName) ||
         utils.hasWhiteSpace(lastName) ||
-        utils.hasWhiteSpace(email) ) {
+        utils.hasWhiteSpace(email)) {
         errors.push({msg: 'Please dont use white spaces in inputs'});
     }
 
@@ -67,33 +70,72 @@ router.post('/addUserForm', passport.authenticate('jwt', { session: false }), as
     }
 
     if (errors.length > 0) {
-        res.render('addUser', {errors})
+        res.render('addUser', {errors, name: obj.username, admin: obj.isAdmin})
     } else {
         await usersBL.addUser(req);
-        req.flash('success_msg', `New user ${req.body.username} added successfully`);
-        res.redirect('/menu/manage');
+        let success = []
+        success.push({msg: `New user ${req.body.username} added successfully`})
+        let userList = await usersBL.getAllUsers();
+        res.render('manageUsers', {userList, success, name: obj.username, admin: obj.isAdmin});
     }
 
 });
 
 // Edit User Handler
-router.post('/editUserForm', passport.authenticate('jwt', { session: false }), async function (req, res, next) {
-    let errors = await usersBL.updateUser(req);
-    if (typeof errors != 'undefined') {
-        let userList = await usersBL.getAllUsers();
-        res.render('manageUsers', {userList, errors})
+router.post('/editUserForm', async function (req, res, next) {
+
+    // Pull data from the front end form
+    const {firstName, lastName, username, timeOut} = req.body
+
+    let obj = utils.getPayloadFromToken(req)
+    let userList = await usersBL.getAllUsers();
+
+    let errors = [];
+
+    // Check required fields not blank
+    if (!firstName || !lastName || !username || !timeOut) {
+        errors.push({msg: 'Please dont leave blank fields'});
+    }
+    // Check if username is unique
+    // let searchForUserInDB = await User.find({username})
+    // if (searchForUserInDB.length > 0) {
+    //     errors.push({msg: 'This username is already exists'});
+    // }
+    // Check if inputs got white spaces
+    if (hasWhiteSpace(username) || hasWhiteSpace(firstName) || hasWhiteSpace(lastName)) {
+        errors.push({msg: 'Please dont use white spaces in inputs'});
+    }
+    // Check if inputs got numbers
+    let hasNumber = /\d/;
+    if (hasNumber.test(firstName) || hasNumber.test(lastName)) {
+        errors.push({msg: 'Please dont use numbers in name fields'});
+    }
+    // Check if values too long
+    if (username.length > 12 || firstName.length > 12 || lastName.length > 12) {
+        errors.push({msg: 'Inputs must be shorter than 12 charters'});
+    }
+    if (errors.length > 0) {
+        res.render('manageUsers', {userList, errors, name: obj.username, admin: obj.isAdmin})
     } else {
-        req.flash('success_msg', `User ${req.body.username} edited successfully`);
+        await usersBL.updateUser(req);
         res.redirect('/menu/manage');
     }
 
 });
 
 // Delete User Handler
-router.post('/deleteUserForm', passport.authenticate('jwt', { session: false }), async function (req, res, next) {
-    await usersBL.deleteUser(req.body.userId);
-    req.flash('success_msg', `User ${req.body.username} deleted successfully`);
-    res.redirect('/menu/manage');
+router.post('/deleteUserForm', async function (req, res, next) {
+    let user = await usersBL.deleteUser(req.body.userId);
+    let success = []
+    success.push({msg: `User ${user} deleted successfully`})
+    let obj = utils.getPayloadFromToken(req)
+    let userList = await usersBL.getAllUsers();
+    res.render('manageUsers', {userList, success, name: obj.username, admin: obj.isAdmin});
 });
+
+function hasWhiteSpace(s) {
+    return s.indexOf(' ') >= 0;
+}
+
 
 module.exports = router;
