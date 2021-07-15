@@ -1,0 +1,93 @@
+<script type="text/javascript">
+    $(document).ready(function () {
+        var multipleCancelButton = new Choices('#choices-multiple-remove-button', {
+            removeItemButton: true,
+            maxItemCount: 3,
+            searchResultLimit: 32,
+            renderChoiceLimit: 32
+        });
+    });
+</script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/bbbootstrap/libraries@main/choices.min.css">
+<script src="https://cdn.jsdelivr.net/gh/bbbootstrap/libraries@main/choices.min.js"></script>
+
+
+<div class="row mt-5 justify-content-md-center">
+    <div class="card-body">
+        <h1 class="text-center mb-3">
+            <i class="fas fa-plus-circle"></i> Add New Movie
+        </h1>
+        <a href="/menu/movies" class="btn btn-secondary mr-1 <% if(!permissions.vm){ %>disabled<% } %>">
+            <i class="fas fa-list"></i> All Movies
+        </a>
+
+        <a href="/menu/addMovie" class="btn btn-secondary mr-1 disabled">
+            <i class="fas fa-plus-circle"></i> Add Movie
+        </a>
+
+        <!-- Hard coded width -->
+        <div class="card mt-2" style="width: 30rem;">
+            <div class="card-body">
+                <% include ./partials/messages.ejs %>
+                <form action="/menu/addMovieForm" method="POST" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="title"><strong>Title</strong></label>
+                                <input
+                                        type="text"
+                                        id="title"
+                                        name="title"
+                                        class="form-control"
+                                        placeholder="Enter movie title"
+                                />
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="premiered"><strong>Premiered</strong></label>
+                                <input
+                                        type="text"
+                                        id="premiered"
+                                        name="premiered"
+                                        class="form-control"
+                                        placeholder="Enter premiered year"
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="genres"><strong>Genres</strong></label>
+                        <select name="genres"
+                                id="choices-multiple-remove-button"
+                                placeholder="Select upto 3 generis"
+                                multiple>
+                            <option value=""></option>
+                            <% genreList.forEach(function(item) { %>
+                                <option value="<%= item %>"><%= item %></option>
+                            <% }); %>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="myImage"><strong>Upload image</strong></label>
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" name="myImage" id="myImage">
+                            <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
+                        </div>
+
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block">
+                        Add
+                    </button>
+                </form>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
