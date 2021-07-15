@@ -30,6 +30,7 @@
         <div class="card mt-2" style="width: 30rem;">
             <div class="card-body">
                 <% include ./partials/messages.ejs %>
+
                 <form action="/menu/addMovieForm" method="POST" enctype="multipart/form-data">
                     <div class="row">
                         <div class="col">
@@ -59,10 +60,18 @@
                     </div>
 
                     <div class="form-group">
+                        <label for="myImage"><strong>Upload image</strong></label>
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" name="myImage" id="myImage">
+                            <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
                         <label for="genres"><strong>Genres</strong></label>
                         <select name="genres"
                                 id="choices-multiple-remove-button"
-                                placeholder="Select upto 3 generis"
+                                placeholder="Select upto 3 generes"
                                 multiple>
                             <option value=""></option>
                             <% genreList.forEach(function(item) { %>
@@ -71,20 +80,10 @@
                         </select>
                     </div>
 
-                    <div class="form-group">
-                        <label for="myImage"><strong>Upload image</strong></label>
-                        <div class="custom-file">
-                            <input type="file" class="custom-file-input" name="myImage" id="myImage">
-                            <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
-                        </div>
-
-                    </div>
-
                     <button type="submit" class="btn btn-primary btn-block">
                         Add
                     </button>
                 </form>
-
 
             </div>
         </div>

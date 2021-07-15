@@ -5,51 +5,35 @@ const utils = require('../lib/utils');
 const moviesBL = require('../models/moviesBL');
 
 // File upload
-const path = require('path');
-const pathToStore = path.join(__dirname, '..', 'uploads');
+// const path = require('path');
+// const pathToStore = path.join(__dirname, '..', 'uploads');
 const uuid = require('uuid')
 const multer  = require('multer')
-
-//Set Storage Engine
-var storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, __dirname, '..', 'uploads')      //you tell where to upload the files,
+const DIR = './uploads';
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, DIR);
     },
-    filename: function (req, file, cb) {
-        cb(null, file.fieldname + '-' + Date.now() + '.png')
+    filename: (req, file, cb) => {
+        const fileName = uuid.v4().toString() + '.' + file.mimetype.split('/').reverse()[0];
+        cb(null, fileName)
     }
-})
-
-var upload = multer({storage: storage,
-    onFileUploadStart: function (file) {
-        console.log(file.originalname + ' is starting ...')
-    },
 });
-// var storage = multer.diskStorage({
-//     destination: function (req, file, cb) {
-//         cb(null, '../uploads')
-//     },
-//     filename: function (req, file, cb) {
-//         cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
-//     }
-// })
+const upload = multer({
+    storage: storage,
+    fileFilter: (req, file, cb) => {
+        if (file.mimetype === "image/png" || file.mimetype === "image/jpg" || file.mimetype === "image/jpeg") {
+            cb(null, true);
+        } else {
+            cb(null, false);
+            return cb(new Error('Only .png, .jpg and .jpeg format allowed!'));
+        }
+    },
+    limits: {
+        fileSize: 2 * 1024 * 1024 // for 2MB
+    }
+}).single('myImage');
 
-// const upload = multer({ dest: 'uploads/' })
-// const upload = require('../lib/uploads')
-
-// const multer  = require('multer')
-//
-//
-// const storage = multer.diskStorage({
-//     destination: function (req, file, cb) {
-//         cb(null, pathToStore)
-//     },
-//     filename: function (req, file, cb) {
-//         cb(null, uuid.v4() + path.extname(file.originalname));
-//     }
-// })
-
-// const upload = multer({ storage: storage })
 
 // Menu page
 router.get('/', passport.authenticate('jwt', {session: false}), async function (req, res, next) {
@@ -72,33 +56,30 @@ router.get('/addMovie', passport.authenticate('jwt', {session: false}), async fu
 
     let obj = utils.getPayloadFromToken(req);
     let permissions = await moviesBL.permissions(obj.sub);
-    res.render('addMovie', {name: obj.username, admin: obj.isAdmin, permissions, genreList});
+    res.render('addMovie', {name: obj.username, admin: obj.isAdmin, permissions, genreList, message: undefined});
 });
 
 // Add movie handler
-router.post('/addMovieForm', upload.single('myImage'), passport.authenticate('jwt', {session: false}), async function (req, res, next) {
-    // let genreList = await moviesBL.getGenres();
-    // let obj = utils.getPayloadFromToken(req);
-    // let permissions = await moviesBL.permissions(obj.sub);
-    //
+router.post('/addMovieForm', passport.authenticate('jwt', {session: false}), async function (req, res, next) {
+    upload(req, res, async function (err) {
+        if (err) {
+            let genreList = await moviesBL.getGenres();
 
-    // const file = req.files.file
-    // const fileName = uuid.v4() + file.name
-    // file.mv(`${pathToStore}/${fileName}`)
-    console.log(req.file)
+            let obj = utils.getPayloadFromToken(req);
+            let permissions = await moviesBL.permissions(obj.sub);
+            res.render('addMovie', {name: obj.username, admin: obj.isAdmin, permissions, genreList, error_msg: err});
 
+        } else {
+            let genreList = await moviesBL.getGenres();
 
-    // var upload = multer({ storage: storage, limits: { fileSize: 100000000 } }).single('myImage');
-    // // req.file is the `myImage` file
-    // upload(req, res, function (err) {
-    //     console.log(res.file);
-    //     if (err) {
-    //         console.log(err);
-    //     } else {
-    //         console.log("hello" + storage);
-    //         res.send("test");
-    //     }
-    // })
+            let obj = utils.getPayloadFromToken(req);
+            let permissions = await moviesBL.permissions(obj.sub);
+            const success_msg = 'You new avatar is uploaded'
+            res.render('addMovie', {name: obj.username, admin: obj.isAdmin, permissions, genreList, success_msg});
+        }
+
+        // Everything went fine
+    })
 });
 
 

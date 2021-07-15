@@ -9,9 +9,6 @@ const expressLayouts = require('express-ejs-layouts');
 const passport = require('passport');
 const session = require('express-session');
 const flash = require('connect-flash');
-// File upload
-const fileUpload = require('express-fileupload')
-const bodyParser= require('body-parser')
 
 const loginController = require('./controllers/loginController');
 const movieController = require('./controllers/movieController');
@@ -27,8 +24,6 @@ require('dotenv').config();
 // Create the Express application
 const app = express();
 
-// File upload
-app.use(fileUpload());
 
 // Configures the database and opens a global connection that can be used in any module with `mongoose.connection`
 require('./config/database');
@@ -46,8 +41,6 @@ app.use(passport.session());
 // Instead of using body-parser middleware, use the new Express implementation of the same thing
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
-
-app.use(bodyParser.urlencoded({extended: true}))
 
 // Express Sessions
 app.use(session({
