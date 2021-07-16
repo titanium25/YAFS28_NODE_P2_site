@@ -9,6 +9,7 @@ const utils = require('../lib/utils');
 const jsonDAL = require('../DAL/jsonDAL');
 
 // Login page
+// ToDo: If token not expired redirect to menu
 router.get('/', function (req, res, next) {
     res.render('login');
 });
@@ -22,7 +23,7 @@ router.get('/register', function (req, res, next) {
 router.get('/user/verify/:id/:token', async function (req, res, next) {
     const user = await User.findOne({_id: req.params.id});
     const token = await Token.findOne(({userId: user._id, token: req.params.token}));
-    if(!user || !token) {
+    if (!user || !token) {
         req.flash('error_msg', 'Invalid link')
         res.redirect('/');
     } else {
@@ -114,14 +115,13 @@ router.post('/registerForm', async function (req, res, next) {
 
 // Login handler
 router.post('/signIn', function (req, res, next) {
-    const {username, password, password2} = req.body
+    const {username, password} = req.body
     let errors = [];
-
-    if(!username || !password) {
+    if (!username || !password) {
         errors.push({msg: "Please fill in username and password"})
         res.render('login', {errors})
     } else {
-        User.findOne({username: req.body.username, isActivated : true})
+        User.findOne({username: req.body.username, isActivated: true})
             .then((user) => {
                 if (!user) {
                     errors.push({msg: 'That username is not registered or activated'})
@@ -152,16 +152,9 @@ router.post('/signIn', function (req, res, next) {
                         }
                     })
                 }
-
-
-
             });
     }
-
-
-
 });
-
 
 
 module.exports = router;
