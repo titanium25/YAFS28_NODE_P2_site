@@ -1,6 +1,9 @@
 const restDAL = require('../DAL/restDAL');
 const jsonDAL = require('../DAL/jsonDAL');
 
+// File delete
+const fs = require('fs')
+
 getMovies = async function () {
     const movies = await restDAL.getAll()
     return movies.data;
@@ -14,7 +17,7 @@ getMovie = async function (id) {
 exports.getMovieList = async () => {
     const movies = await restDAL.getAll()
     return await movies.data.map(movie => ({
-        id: movie._id,
+        _id: movie._id,
         name: movie.name,
         genres: movie.genres,
         premiered: movie.premiered,
@@ -26,8 +29,19 @@ exports.addMovie = async (obj) => {
     return await restDAL.add(obj);
 }
 
-exports.deleteMovie = async (id) => {
-    return await restDAL.delete(id);
+exports.deleteMovie = async (req) => {
+    let msg = `Movie ${req.body.title} deleted successfully`
+    if(!req.body.image.startsWith('https://')) {
+        try {
+            fs.unlinkSync('public' + req.body.image)
+            //file removed
+        } catch (err) {
+            console.error(err)
+            msg = err
+        }
+    }
+    await restDAL.delete(req.body.movieId);
+    return msg;
 }
 
 // Not belong to here
@@ -38,7 +52,7 @@ exports.permissions = async (id) => {
 }
 
 exports.findMovie = async (req) => {
-    const {title} = req.body
+    const title = req.body.title
     const allMoviesAPI = await restDAL.getAll()
 
     return allMoviesAPI.data.filter(movie =>

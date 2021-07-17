@@ -114,6 +114,7 @@ router.post('/registerForm', async function (req, res, next) {
 });
 
 // Login handler
+// ToDO: Captcha
 router.post('/signIn', function (req, res, next) {
     const {username, password} = req.body
     let errors = [];

@@ -2,9 +2,11 @@
     $(document).on("click", ".open-DeleteMovieDialog", function () {
         let movieId = $(this).data('id');
         let title = $(this).data('title');
-        console.log(movieId)
+        let image = $(this).data('image');
+        console.log(image)
         $(".modal-footer #movieId").val(movieId);
         $(".modal-footer #title").val(title);
+        $(".modal-footer #image").val(image);
         $(".modal-body span").text(title);
 
         document.getElementById("delete").disabled = true;
@@ -60,13 +62,13 @@
                 </div>
                 <div class="card-block px-2 mt-3">
                     <h4 class="card-title"><%= m.name %>, <%= m.premiered.substring(0, 4) %></h4>
-                    <h5><%= m.id %></h5>
                     <p class="card-text">Genres: <%= m.genres %></p>
 
                     <!-- Button trigger delete modal -->
                     <a data-toggle="modal"
-                       data-id="<%= m.id %>"
+                       data-id="<%= m._id %>"
                        data-title="<%= m.name %>"
+                       data-image="<%= m.image %>"
                        href="#deleteMovieModal"
                        class="open-DeleteMovieDialog btn btn-danger mr-1 float-right <% if(!permissions.dm){ %>disabled<% } %>">
                         <i class="fas fa-trash-alt"></i> Delete
@@ -79,6 +81,7 @@
                 </div>
             </div>
         <% }) %>
+
     </div>
 </div>
 
@@ -109,6 +112,7 @@
                 <form action="/menu/deleteMovieForm" method="POST">
                     <input type="hidden" name="movieId" id="movieId" value="movieId"/>
                     <input type="hidden" name="title" id="title" value="title"/>
+                    <input type="hidden" name="image" id="image" value="image"/>
                     <button type="submit" id="delete" class="btn btn-block btn-danger">
                         I understand the consequences, delete this movie
                     </button>
