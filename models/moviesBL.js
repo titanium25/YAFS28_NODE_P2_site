@@ -8,18 +8,8 @@ exports.countMovies = async () => {
     return (await restDAL.count()).data;
 }
 
-getMovies = async function () {
-    const movies = await restDAL.getAll()
-    return movies.data;
-}
-
-getMovie = async function (id) {
-    const movie = await restDAL.getById(id);
-    return movie.data;
-}
-
-exports.getMovieList = async (page, size) => {
-    const movies = await restDAL.getAll(page, size)
+exports.getMovieList = async (page, size, find) => {
+    const movies = await restDAL.getAll(page, size, find)
     return await movies.data.map(movie => ({
         _id: movie._id,
         name: movie.name,
@@ -33,12 +23,20 @@ exports.addMovie = async (obj) => {
     return await restDAL.add(obj);
 }
 
-exports.updateMovie = async (id, obj) => {
-    return await restDAL.update(id, obj)
+exports.updateMovie = async (req) => {
+    const {movieId, title, premiered, genres, image} = req.body;
+    let obj = {
+        name: title,
+        genres: genres,
+        premiered: premiered,
+        image: image
+    }
+    await restDAL.update(movieId, obj)
+    return `Movie "${title}" updated successfully`;
 }
 
 exports.deleteMovie = async (req) => {
-    let msg = `Movie ${req.body.title} deleted successfully`
+    let msg = `Movie "${req.body.title}" deleted successfully`
     if(!req.body.image.startsWith('https://')) {
         try {
             fs.unlinkSync('public' + req.body.image)
@@ -57,15 +55,6 @@ exports.permissions = async (id) => {
     let permissionsJSON = await jsonDAL.getPermissions();
     let permissionsDataArr = permissionsJSON.permissionsData;
     return permissionsDataArr.find(perm => perm.id === id);
-}
-
-exports.findMovie = async (req) => {
-    const title = req.body.title.toLowerCase()
-    const allMoviesAPI = await restDAL.search()
-
-    return allMoviesAPI.data.filter(movie =>
-        (movie.name.toLowerCase().includes(title) || title === '')
-    )
 }
 
 exports.getGenres = async function () {

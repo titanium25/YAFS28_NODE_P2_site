@@ -8,12 +8,16 @@
                 <li class="nav-item">
                     <a class="nav-link" href="/menu">Home </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/menu/movies">Movies </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Subscriptions </a>
-                </li>
+                <% if(permissions.vm){ %>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/menu/movies">Movies </a>
+                    </li>
+                <% } %>
+                <% if(permissions.vs){ %>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/menu/subs">Subscriptions </a>
+                    </li>
+                <% } %>
                 <li class="nav-item">
                     <a class="nav-link" href="#">My profile </a>
                 </li>

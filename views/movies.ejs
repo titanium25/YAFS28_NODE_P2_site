@@ -1,9 +1,9 @@
 <script type="text/javascript">
+
     $(document).on("click", ".open-DeleteMovieDialog", function () {
         let movieId = $(this).data('id');
         let title = $(this).data('title');
         let image = $(this).data('image');
-        console.log(image)
         $(".modal-footer #movieId").val(movieId);
         $(".modal-footer #title").val(title);
         $(".modal-footer #image").val(image);
@@ -27,16 +27,21 @@
         let title = $(this).data('name');
         let premiered = $(this).data('premiered');
         let genres = $(this).data('genres');
-        console.log(genres)
+        let image = $(this).data('image');
 
         $(".modal-body #movieId").val(movieId);
         $(".modal-body #title").val(title);
         $(".modal-body #premiered").val(premiered);
         $(".modal-body #genres").val(genres);
+        $(".modal-body #image").val(image);
 
     });
+    window.onload = function () {
+        document.querySelector('form').onsubmit = function () {
+            this.setAttribute('action', "/menu/movies?find=" + document.querySelector('input[name=find]').value)
+        }
+    }
 </script>
-
 
 <div class="row mt-5 justify-content-md-center">
     <div class="card-body">
@@ -46,9 +51,9 @@
         </h1>
         <% include ./partials/messages.ejs %>
 
-        <form class="form" action="/menu/movies/" method="POST">
+        <form class="form" action="/baseurl/" method="GET">
 
-            <a href="/menu/movies" class="btn btn-secondary mr-1 disabled">
+            <a href="/menu/movies?find=" class="btn btn-secondary mr-1 disabled">
                 <i class="fas fa-list"></i> All Movies
             </a>
             <% if(permissions.cm){ %>
@@ -57,85 +62,89 @@
                 </a>
             <% } %>
 
-            <input class="form-control mr-sm-2 input-sm w-25 float-right" type="search" name="title"
+            <input class="form-control mr-sm-2 input-sm w-25 float-right" type="text" name="find"
                    placeholder="Find movie"
                    aria-label="Search">
             <button class="btn btn-outline-primary float-right mr-4" type="submit">Search</button>
 
         </form>
-
-        <% include ./partials/pagination.ejs %>
-
-        <div class="row row-cols-1 row-cols-md-2 g-4">
-            <% movies.forEach(function(m) { %>
-                <div class="col">
-                    <div class="card mb-3" style="max-width: 500px;">
-                        <div class="row g-0">
-                            <div class="col-md-4">
-                                <img style="
+        <% if(movies.length === 0) { %>
+        <div class="badge bg-primary text-wrap mt-3 " style="width: 15rem; align-content: center">
+            <h1>Nothing found</h1>
+        </div>
+        <% } else { %>
+            <% include ./partials/pagination.ejs %>
+                <div class="row row-cols-1 row-cols-md-2 g-4">
+                    <% movies.forEach(function(m) { %>
+                        <div class="col">
+                            <div class="card mb-3" style="max-width: 500px;">
+                                <div class="row g-0">
+                                    <div class="col-md-4">
+                                        <img style="
                 width: 190px;
                 height: 260px;
                 object-fit: cover;"
-                                     class="card-img-top"
-                                     alt="Card image cap"
-                                     src="
+                                             class="card-img-top"
+                                             alt="Card image cap"
+                                             src="
                     <% if(m.image) { %>
                         <%= m.image %>
                     <% } else { %>
                         /img/img.png
                     <% } %>
                     ">
-                            </div>
-                            <div class="col-md-8">
-                                <div class="card-body">
-                                    <h5 class="card-title"><%= m.name %>, <%= m.premiered.substring(0, 4) %></h5>
-                                    <p class="card-text">Genres: <%= m.genres %></p>
-
-                                    <div class="card">
+                                    </div>
+                                    <div class="col-md-8">
                                         <div class="card-body">
-                                            <h6 class="card-title">Subscriptions watched</h6>
-                                            <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
+                                            <h5 class="card-title"><%= m.name %>
+                                                , <%= m.premiered.substring(0, 4) %></h5>
+                                            <p class="card-text">Genres: <%= m.genres %></p>
 
-                                            <a href="#" class="card-link">Card link</a>
-                                            <a href="#" class="card-link">Another link</a>
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <h6 class="card-title">Subscriptions watched</h6>
+                                                    <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
+
+                                                    <a href="#" class="card-link">Card link</a>
+                                                    <a href="#" class="card-link">Another link</a>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="card-footer">
+                                            <!-- Button trigger delete modal -->
+                                            <% if(permissions.dm){ %>
+                                                <a data-toggle="modal"
+                                                   data-id="<%= m._id %>"
+                                                   data-title="<%= m.name %>"
+                                                   data-image="<%= m.image %>"
+                                                   href="#deleteMovieModal"
+                                                   class="open-DeleteMovieDialog btn btn-danger mr-1 float-right">
+                                                    <i class="fas fa-trash-alt"></i> Delete
+                                                </a>
+                                            <% } %>
+                                            <!-- Button trigger edit modal -->
+                                            <% if(permissions.um){ %>
+                                                <a data-toggle="modal"
+                                                   data-id="<%= m._id %>"
+                                                   data-name="<%= m.name %>"
+                                                   data-premiered="<%= m.premiered.substring(0, 4) %>"
+                                                   data-genres="<%= m.genres %>"
+                                                   data-image="<%= m.image %>"
+                                                   href="#editMovieModal"
+                                                   class="open-EditMovieDialog btn btn-info mr-1 float-right">
+                                                    <i class="fas fa-edit"></i> Edit
+                                                </a>
+                                            <% } %>
                                         </div>
                                     </div>
-
-                                </div>
-                                <div class="card-footer">
-                                    <!-- Button trigger delete modal -->
-                                    <% if(permissions.dm){ %>
-                                        <a data-toggle="modal"
-                                           data-id="<%= m._id %>"
-                                           data-title="<%= m.name %>"
-                                           data-image="<%= m.image %>"
-                                           href="#deleteMovieModal"
-                                           class="open-DeleteMovieDialog btn btn-danger mr-1 float-right">
-                                            <i class="fas fa-trash-alt"></i> Delete
-                                        </a>
-                                    <% } %>
-                                    <!-- Button trigger edit modal -->
-                                    <% if(permissions.um){ %>
-                                        <a data-toggle="modal"
-                                           data-id="<%= m.id %>"
-                                           data-name="<%= m.name %>"
-                                           data-premiered="<%= m.premiered.substring(0, 4) %>"
-                                           data-genres="<%= m.genres %>"
-                                           href="#editMovieModal"
-                                           class="open-EditMovieDialog btn btn-info mr-1 float-right">
-                                            <i class="fas fa-edit"></i> Edit
-                                        </a>
-                                    <% } %>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    <% }) %>
                 </div>
-            <% }) %>
-        </div>
-
-        <% include ./partials/pagination.ejs %>
-
+            <% include ./partials/pagination.ejs %>
+        <% } %>
     </div>
 </div>
 
@@ -189,7 +198,7 @@
             </div>
             <div class="modal-body">
                 <!-- Edit Form -->
-                <form action="/menu/movies/editMovieForm" method="POST">
+                <form action="/menu/editMovieForm" method="POST">
                     <div class="row">
                         <div class="col">
                             <div class="form-group">
@@ -231,6 +240,7 @@
                     </div>
 
                     <input type="hidden" name="movieId" id="movieId" value="movieId"/>
+                    <input type="hidden" name="image" id="image" value="image"/>
                     <button type="button" class="btn btn-secondary mr-1 float-right"
                             data-dismiss="modal">
                         Discard

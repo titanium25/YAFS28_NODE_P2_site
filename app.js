@@ -13,6 +13,7 @@ const flash = require('connect-flash');
 const loginController = require('./controllers/loginController');
 const movieController = require('./controllers/movieController');
 const userController = require('./controllers/userController');
+const subsController = require('./controllers/subController');
 
 /**
  * -------------- GENERAL SETUP ----------------
@@ -81,6 +82,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', loginController);
 app.use('/menu', movieController);
 app.use('/menu/manage', userController);
+app.use('/menu/subs', subsController);
 
 
 /**

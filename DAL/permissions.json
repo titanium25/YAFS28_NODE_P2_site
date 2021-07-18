@@ -13,14 +13,14 @@
     },
     {
       "id": "60ea257d08a6635080b9a9f3",
-      "vs": false,
+      "vs": true,
       "cs": false,
       "ds": false,
-      "us": false,
-      "vm": false,
+      "us": true,
+      "vm": true,
       "cm": false,
       "dm": false,
-      "um": false
+      "um": true
     },
     {
       "id": "60ed4f677a108c2f400c0fd6",

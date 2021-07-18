@@ -6,20 +6,22 @@ const passport = require('passport');
 const utils = require('../lib/utils');
 const usersBL = require('../models/usersBL')
 const jsonDAL = require('../DAL/jsonDAL');
-
+const moviesBL = require('../models/moviesBL');
 
 
 // Users Console
 router.get('/', passport.authenticate('jwt', {session: false}), async function (req, res, next) {
     let obj = utils.getPayloadFromToken(req)
     let userList = await usersBL.getAllUsers();
-    res.render('manageUsers', {userList, name: obj.username, admin: obj.isAdmin});
+    let permissions = await moviesBL.permissions(obj.sub);
+    res.render('manageUsers', {userList, name: obj.username, admin: obj.isAdmin, permissions});
 });
 
 // Add User
-router.get('/addUser', passport.authenticate('jwt', {session: false}), function (req, res, next) {
+router.get('/addUser', passport.authenticate('jwt', {session: false}), async function (req, res, next) {
     let obj = utils.getPayloadFromToken(req)
-    res.render('addUser', {name: obj.username, admin: obj.isAdmin});
+    let permissions = await moviesBL.permissions(obj.sub);
+    res.render('addUser', {name: obj.username, admin: obj.isAdmin, permissions});
 });
 
 // Add User Handler

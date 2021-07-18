@@ -1,0 +1,24 @@
+
+
+<div class="row mt-5 justify-content-md-center">
+    <div class="card-body">
+
+        <h1 class="text-center mb-3">
+            <i class="fas fa-paper-plane"></i> Subscriptions
+        </h1>
+        <% include ./partials/messages.ejs %>
+
+
+
+            <a href="/menu/subs" class="btn btn-secondary mr-1 disabled">
+                <i class="fas fa-share-square"></i> All Members
+            </a>
+            <% if(permissions.cs){ %>
+                <a href="/menu/addSub" class="btn btn-secondary">
+                    <i class="fas fa-plus-circle"></i> Add Member
+                </a>
+            <% } %>
+
+
+    </div>
+</div>
