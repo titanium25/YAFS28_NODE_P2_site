@@ -4,6 +4,10 @@ const jsonDAL = require('../DAL/jsonDAL');
 // File delete
 const fs = require('fs')
 
+exports.countMovies = async () => {
+    return (await restDAL.count()).data;
+}
+
 getMovies = async function () {
     const movies = await restDAL.getAll()
     return movies.data;
@@ -14,8 +18,8 @@ getMovie = async function (id) {
     return movie.data;
 }
 
-exports.getMovieList = async () => {
-    const movies = await restDAL.getAll()
+exports.getMovieList = async (page, size) => {
+    const movies = await restDAL.getAll(page, size)
     return await movies.data.map(movie => ({
         _id: movie._id,
         name: movie.name,
@@ -27,6 +31,10 @@ exports.getMovieList = async () => {
 
 exports.addMovie = async (obj) => {
     return await restDAL.add(obj);
+}
+
+exports.updateMovie = async (id, obj) => {
+    return await restDAL.update(id, obj)
 }
 
 exports.deleteMovie = async (req) => {
@@ -44,7 +52,7 @@ exports.deleteMovie = async (req) => {
     return msg;
 }
 
-// Not belong to here
+// ToDo: Not belong in here
 exports.permissions = async (id) => {
     let permissionsJSON = await jsonDAL.getPermissions();
     let permissionsDataArr = permissionsJSON.permissionsData;
@@ -52,11 +60,11 @@ exports.permissions = async (id) => {
 }
 
 exports.findMovie = async (req) => {
-    const title = req.body.title
-    const allMoviesAPI = await restDAL.getAll()
+    const title = req.body.title.toLowerCase()
+    const allMoviesAPI = await restDAL.search()
 
     return allMoviesAPI.data.filter(movie =>
-        (movie.name.toLowerCase().includes(title.toLowerCase()) || title.toLowerCase() === '')
+        (movie.name.toLowerCase().includes(title) || title === '')
     )
 }
 

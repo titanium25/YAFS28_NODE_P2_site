@@ -5,6 +5,7 @@ const utils = require('../lib/utils');
 const moviesBL = require('../models/moviesBL');
 // const upload = require('../lib/upload')
 
+// ToDo: Move to separate file
 const uuid = require('uuid')
 const multer = require('multer')
 const DIR = './public/img/uploads';
@@ -41,12 +42,21 @@ router.get('/', passport.authenticate('jwt', {session: false}), async function (
 
 // Movies page
 router.get('/movies', passport.authenticate('jwt', {session: false}), async function (req, res, next) {
-    const movies = await moviesBL.getMovieList();
+    let page = parseInt(req.query.page) || 1
+    let size = parseInt(req.query.size) || 10
+    const count = await moviesBL.countMovies();
+    const movies = await moviesBL.getMovieList(page, size);
     let obj = utils.getPayloadFromToken(req);
     let permissions = await moviesBL.permissions(obj.sub);
-    let success_msg = req.query.valid;
-    if (success_msg === undefined) success_msg = ''
-    res.render('movies', {movies, name: obj.username, admin: obj.isAdmin, permissions, success_msg});
+    let success_msg = req.query.valid || '';
+    res.render('movies', {
+        movies,
+        current: page,
+        pages: Math.ceil(count / size),
+        name: obj.username,
+        admin: obj.isAdmin,
+        permissions,
+        success_msg});
 });
 
 // Add movie page
@@ -118,7 +128,7 @@ router.post('/addMovieForm', passport.authenticate('jwt', {session: false}), asy
                         const newMovie = {
                             name: req.body.title,
                             genres: req.body.genres,
-                            image: req.file.filename === undefined ? '' : DIR.substring(8) + '/' + req.file.filename,
+                            image: DIR.substring(8) + '/' + req.file.filename,
                             premiered: req.body.premiered
                         }
                         await moviesBL.addMovie(newMovie)
@@ -137,13 +147,34 @@ router.post('/deleteMovieForm', passport.authenticate('jwt', {session: false}), 
     res.redirect('/menu/movies/?valid=' + success_msg);
 });
 
+// Edit movie handler
+router.post('/editMovieForm', passport.authenticate('jwt', {session: false}), async function (req, res, next) {
+    const {movieId, title, premiered, genres} = req.body;
+    console.log(movieId)
+    console.log(title)
+    console.log(premiered)
+    console.log(genres)
+    // await moviesBL.updateMovie()
+    res.redirect('/menu/movies')
+});
+
 // Search for movies handler
 router.post('/movies', passport.authenticate('jwt', {session: false}), async function (req, res, next) {
-    let movies = await moviesBL.findMovie(req)
+    let page = parseInt(req.query.page) || 1
+    let size = parseInt(req.query.size) || 10
+    const count = await moviesBL.countMovies();
+    const movies = await moviesBL.findMovie(req);
     let obj = utils.getPayloadFromToken(req);
     let permissions = await moviesBL.permissions(obj.sub);
-
-    res.render('movies', {movies, name: obj.username, admin: obj.isAdmin, permissions});
+    let success_msg = req.query.valid || '';
+    res.render('movies', {
+        movies,
+        current: page,
+        pages: -1,
+        name: obj.username,
+        admin: obj.isAdmin,
+        permissions,
+        success_msg});
 });
 
 // Logout Handle
