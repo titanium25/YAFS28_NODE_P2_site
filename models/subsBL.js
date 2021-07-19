@@ -1,8 +1,10 @@
 const restDAL = require('../DAL/restDAL');
+const utils = require('../lib/utils');
 
 exports.getSubs = async () => {
     const members = await restDAL.getMembers();
-    return members.data;
+    let mem = members.data.map(obj => ({...obj, ui: utils.makeId()}))
+    return mem;
 }
 
 exports.deleteSub = async (req) => {

@@ -5,14 +5,18 @@ const utils = require('../lib/utils');
 const moviesBL = require('../models/moviesBL');
 const subsBL = require('../models/subsBL');
 
+
+
 // Member page
 router.get('/', passport.authenticate('jwt', {session: false}), async function (req, res, next) {
     const obj = utils.getPayloadFromToken(req);
     const permissions = await moviesBL.permissions(obj.sub);
     const members = await subsBL.getSubs();
+    const movies = await moviesBL.getMovieList(1, await moviesBL.countMovies(), '');
     const success_msg = req.query.valid || '';
     res.render('subs', {
         members,
+        movies,
         name: obj.username,
         admin: obj.isAdmin,
         permissions,
