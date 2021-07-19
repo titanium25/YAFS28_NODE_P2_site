@@ -140,6 +140,7 @@ router.post('/deleteMovieForm', passport.authenticate('jwt', {session: false}), 
 });
 
 // Edit movie handler
+// ToDo: execute validation
 router.post('/editMovieForm', passport.authenticate('jwt', {session: false}), async function (req, res, next) {
     const success_msg = await moviesBL.updateMovie(req)
     res.redirect('/menu/movies/?valid=' + success_msg)

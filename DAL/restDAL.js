@@ -27,6 +27,22 @@ exports.delete = (id) => {
     return axios.delete(movieURL + '/' + id)
 }
 
+/*
+/### Members
+ */
+
 exports.getMembers = () => {
     return axios.get(memberURL)
+}
+
+exports.deleteMember = (id) => {
+    return axios.delete(memberURL + '/' + id)
+}
+
+exports.addMember = (obj) => {
+    return axios.post(memberURL, obj)
+}
+
+exports.updateMember = (id, obj) => {
+    return axios.put(memberURL + '/' + id, obj)
 }

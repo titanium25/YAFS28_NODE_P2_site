@@ -1,0 +1,61 @@
+<div class="row mt-5 justify-content-md-center">
+    <div class="card-body">
+        <h1 class="text-center mb-3">
+            <i class="fas fa-plus-circle"></i> Add New Member
+        </h1>
+
+        <% if(permissions.vs){ %>
+            <a href="/menu/subs" class="btn btn-secondary mr-1">
+                <i class="fas fa-share-square"></i> All Members
+            </a>
+        <% } %>
+        <a href="/menu/subs/addMember" class="btn btn-secondary disabled">
+            <i class="fas fa-plus-circle"></i> Add Member
+        </a>
+
+        <!-- Hardcoded width -->
+        <div class="card mt-2" style="width: 30rem;">
+            <div class="card-body">
+                <% include ./partials/messages.ejs %>
+
+                <form action="/menu/subs/addMemberForm" method="POST">
+                    <div class="form-group">
+                        <label for="name"><strong>Name</strong></label>
+                        <input
+                                type="text"
+                                id="name"
+                                name="name"
+                                class="form-control"
+                                placeholder="Enter member name"
+                        />
+                    </div>
+                    <div class="form-group">
+                        <label for="email"><strong>Email</strong></label>
+                        <input
+                                type="email"
+                                id="email"
+                                name="email"
+                                class="form-control"
+                                placeholder="Enter member email"
+                        />
+                    </div>
+                    <div class="form-group">
+                        <label for="city"><strong>City</strong></label>
+                        <input
+                                type="text"
+                                id="city"
+                                name="city"
+                                class="form-control"
+                                placeholder="Enter member city"
+                        />
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">
+                        Add
+                    </button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
