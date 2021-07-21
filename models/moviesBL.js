@@ -19,28 +19,24 @@ exports.getMovieList = async (page, size, find) => {
         genres: movie.genres,
         premiered: movie.premiered,
         image: movie.image,
-        subs: await findMovieNameById(movie._id)
+        subs: await findMemberNameByMovieId(movie._id)
     }));
 
     return await Promise.all(k)
 }
 
-async function findMovieNameById(movieId) {
-    // let y = await restDAL.geMemberById('60d1d3a0d7ca945dfcaee91e')
-    // console.log(y.data)
+async function findMemberNameByMovieId(movieId) {
     const subs = await restDAL.getSubs();
     const o = []
-    let z = subs.data.map((s) => s.movies.map(async (e) => {
-
-            // console.log(y.data.name)
+    await Promise.all(subs.data.map(async (s) =>
+        await Promise.all(s.movies.map(async (e) => {
             if (e.movieId === movieId) {
-                // let y = await restDAL.geMemberById(s.memberId)
-                // console.log(y.data.name)
-                let obj = {name: s.memberId, date: e.date}
+                let y = await restDAL.geMemberById(s.memberId)
+                let obj = {name: y.data.name, date: e.date}
                 o.push(obj)
             }
         }
-    ))
+    ))))
     return await Promise.all(o)
 }
 

@@ -47,7 +47,7 @@ router.get('/movies', passport.authenticate('jwt', {session: false}), async func
     let find = req.query.find || '';
     const count = await moviesBL.countMovies();
     const movies = await moviesBL.getMovieList(page, size, find);
-    console.log(movies[0])
+    console.log(movies[0].subs)
     // movies.map((e) = > e.subs.)
     let obj = utils.getPayloadFromToken(req);
     let permissions = await moviesBL.permissions(obj.sub);
