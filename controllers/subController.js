@@ -5,18 +5,15 @@ const utils = require('../lib/utils');
 const moviesBL = require('../models/moviesBL');
 const subsBL = require('../models/subsBL');
 
-
-
 // Member page
 router.get('/', passport.authenticate('jwt', {session: false}), async function (req, res, next) {
     const obj = utils.getPayloadFromToken(req);
     const permissions = await moviesBL.permissions(obj.sub);
-    const members = await subsBL.getAllMembers();
-    // console.log(members)
+    let find = req.query.find || '';
+    const members = await subsBL.getAllMembers(find);
     const movies = await moviesBL.getMovieList(1, await moviesBL.countMovies(), '');
     const success_msg = req.query.valid || '';
-    // const subsMovies = await subsBL.getSubsMoviesByMemberId('60f4c4a375b35a6274494a61')
-    // console.log(subsMovies)
+
     res.render('subs', {
         members,
         movies,
@@ -29,7 +26,6 @@ router.get('/', passport.authenticate('jwt', {session: false}), async function (
 router.post('/addSubscription',async function (req, res, next) {
     const {memberId, movieId, date} = req.body
     const obj = {memberId, movieId, date}
-    console.log(obj)
     await subsBL.addSub(obj)
     res.redirect('/menu/subs/')
 });
@@ -110,7 +106,6 @@ router.post('/addMemberForm',async function (req, res, next) {
 });
 
 // Edit member handler
-// ToDo: execute validation
 router.post('/editMemberForm', async function (req, res, next) {
     const obj = utils.getPayloadFromToken(req);
     const permissions = await moviesBL.permissions(obj.sub);
@@ -174,7 +169,7 @@ router.post('/editMemberForm', async function (req, res, next) {
 
 });
 
-// Delete subs handler
+// Delete member handler
 router.post('/deleteMemberForm', async function (req, res, next) {
     const success_msg = await subsBL.deleteSub(req);
     res.redirect('/menu/subs/?valid=' + success_msg);

@@ -102,16 +102,13 @@
                                             <p class="card-text">Genres: <%= m.genres %></p>
 
                                             <% if(m.subs.length > 0) { %>
-                                                <div class="card">
-                                                    <div class="card-header">
-                                                        Subscriptions watched
-                                                    </div>
-                                                    <div class="card-body">
-
-                                                        <% m.subs.forEach(function(s) { %>
-                                                            <%= s.name %> || <%= s.date.substring(0, 10) %>
-                                                        <% }) %>
-                                                    </div>
+                                                <strong>Movies watched:</strong> <br> <br>
+                                                <div class="list-group">
+                                                    <% m.subs.forEach(function(s) { %>
+                                                    <a href="/menu/subs?find=<%= s.name %>"
+                                                       class="list-group-item list-group-item-action"><%= s.name %>
+                                                        , <%= s.date.substring(0, 10) %></a>
+                                                    <% }) %>
                                                 </div>
                                             <% } %>
 

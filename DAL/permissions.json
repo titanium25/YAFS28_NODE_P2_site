@@ -28,8 +28,8 @@
       "cs": false,
       "ds": false,
       "us": true,
-      "vm": true,
-      "cm": true,
+      "vm": false,
+      "cm": false,
       "dm": false,
       "um": false
     }

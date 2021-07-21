@@ -10,9 +10,6 @@ exports.countMovies = async () => {
 
 exports.getMovieList = async (page, size, find) => {
     const movies = await restDAL.getAllMovies(page, size, find);
-    const subs = await restDAL.getSubs();
-    // console.log(subs.data)
-    // console.log(movies.data._id.find(element))
     let k = await movies.data.map(async movie => ({
         _id: movie._id,
         name: movie.name,
@@ -26,18 +23,18 @@ exports.getMovieList = async (page, size, find) => {
 }
 
 async function findMemberNameByMovieId(movieId) {
-    const subs = await restDAL.getSubs();
-    const o = []
-    await Promise.all(subs.data.map(async (s) =>
-        await Promise.all(s.movies.map(async (e) => {
-            if (e.movieId === movieId) {
-                let y = await restDAL.geMemberById(s.memberId)
-                let obj = {name: y.data.name, date: e.date}
-                o.push(obj)
+    const subsArr = await restDAL.getSubs();
+    const membersArr = []
+    await Promise.all(subsArr.data.map(async (subs) =>
+        await Promise.all(subs.movies.map(async (element) => {
+            if (element.movieId === movieId) {
+                let member = await restDAL.geMemberById(subs.memberId)
+                let obj = {name: member.data.name, date: element.date}
+                membersArr.push(obj)
             }
         }
     ))))
-    return await Promise.all(o)
+    return await Promise.all(membersArr)
 }
 
 exports.addMovie = async (obj) => {

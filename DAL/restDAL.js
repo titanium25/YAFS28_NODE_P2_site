@@ -37,8 +37,8 @@ exports.deleteMovie = (id) => {
  * -------------- Members ----------------
  */
 
-exports.getMembers = () => {
-    return axios.get(memberURL)
+exports.getMembers = (find) => {
+    return axios.get(memberURL+ '?find=' + find)
 }
 
 exports.geMemberById = (id) => {
