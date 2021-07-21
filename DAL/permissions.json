@@ -23,26 +23,15 @@
       "um": true
     },
     {
-      "id": "60ed4f677a108c2f400c0fd6",
+      "id": "60f6f62c8afa752be434e4af",
       "vs": true,
       "cs": false,
-      "ds": true,
-      "us": false,
-      "vm": true,
-      "cm": false,
-      "dm": true,
-      "um": false
-    },
-    {
-      "id": "60ed50491510f92d0034e01b",
-      "vs": true,
-      "cs": false,
-      "ds": true,
-      "us": false,
+      "ds": false,
+      "us": true,
       "vm": true,
       "cm": true,
       "dm": false,
-      "um": true
+      "um": false
     }
   ]
 }

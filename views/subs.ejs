@@ -1,4 +1,5 @@
 <script type="text/javascript">
+
     $(document).on("click", ".open-DeleteMemberDialog", function () {
         let id = $(this).data('id');
         let name = $(this).data('name');
@@ -6,7 +7,7 @@
         $(".modal-footer #name").val(name);
         $(".modal-body span").text(name);
 
-        document.getElementById("delete").disabled = true;
+        document.getElementById("deleteMember").disabled = true;
 
         /* event listener */
         document.getElementsByName("confirm")[0].addEventListener('change', doThing);
@@ -15,7 +16,7 @@
         /* function */
         function doThing() {
             if (document.getElementsByName("confirm")[0].value === ('delete ' + name))
-                document.getElementById("delete").disabled = false;
+                document.getElementById("deleteMember").disabled = false;
         }
     });
 
@@ -31,6 +32,7 @@
         $(".modal-body #city").val(city);
 
     });
+
 </script>
 
 
@@ -59,7 +61,7 @@
                             <strong>Name:</strong> <%= m.name %><br>
                             <strong>Email:</strong> <%= m.email %><br>
                             <strong>City:</strong> <%= m.city %><br>
-                            <strong>Movies watched:</strong>
+
                             <p>
                                 <button class="btn btn-primary btn-sm mt-2" type="button" data-toggle="collapse"
                                         data-target="#<%= m.ui %>" aria-expanded="false"
@@ -68,60 +70,84 @@
                                 </button>
                             </p>
                             <div class="collapse mt-2" id="<%= m.ui %>">
-                                <div class="card-header">
-                                    <strong>Add a new movie</strong>
-                                </div>
-                                <div class="card card-body">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <strong>Add a new movie</strong>
+                                    </div>
+                                    <div class="card card-body">
 
-                                    <form action="/menu/subs/addSubscription" method="POST">
-                                        <div class="form-group">
-                                            <label for="name"><strong>Movie title</strong></label>
-                                            <select class="form-select form-select-sm p-2"
-                                                    aria-label=".form-select-sm example" id="name">
-                                                <option selected>Open this select menu</option>
-                                                <% movies.forEach(function(mov) { %>
-                                                    <option value="<%= mov.name %>"><%= mov.name %></option>
-                                                <% }) %>
-                                            </select>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="date"><strong>Date</strong></label>
-                                            <input
-                                                    type="text"
-                                                    id="date"
-                                                    name="date"
-                                                    class="form-control"
-                                                    placeholder="Enter a date"
-                                            />
-                                        </div>
-                                    </form>
-                                    <button class="btn btn-primary btn-sm mt-2" type="button">
-                                        Subscribe
-                                    </button>
+                                        <form action="/menu/subs/addSubscription" method="POST">
+                                            <input type="hidden" name="memberId" value="<%= m._id %>">
+                                            <div class="form-group">
+                                                <label for="name"><strong>Movie title</strong></label>
+                                                <select class="form-control form-select-sm p-2 w-100"
+                                                        aria-label=".form-select-sm" name="movieId" id="name">
+                                                    <option selected>Open this select menu</option>
+                                                    <% movies.forEach(function(mov) { %>
+                                                        <option value="<%= mov._id %>"><%= mov.name %></option>
+                                                    <% }) %>
+                                                </select>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="date"><strong>Date</strong></label>
+                                                <input
+                                                        type="date"
+                                                        id="date"
+                                                        name="date"
+                                                        class="form-control"
+                                                        placeholder="Enter a date"
+                                                />
+                                            </div>
+                                            <button class="btn btn-primary btn-sm mt-2" type="submit">
+                                                Subscribe
+                                            </button>
+                                        </form>
+
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="card-footer">
-                            <!-- Button trigger delete modal -->
-                            <a data-toggle="modal"
-                               data-id="<%= m._id %>"
-                               data-name="<%= m.name %>"
-                               href="#deleteMemberModal"
-                               class="open-DeleteMemberDialog btn btn-danger mr-1 float-right">
-                                <i class="fas fa-user-times"></i> Delete
-                            </a>
+                            <br>
+                            <% if(m.movies) { %>
+                                <strong>Movies watched:</strong> <br> <br>
+                                <div class="list-group">
+                                    <% m.movies.forEach( function (mov) { %>
 
-                            <!-- Button trigger edit modal -->
-                            <a data-toggle="modal"
-                               data-id="<%= m._id %>"
-                               data-name="<%= m.name %>"
-                               data-email="<%= m.email %>"
-                               data-city="<%= m.city %>"
-                               href="#editMemberModal"
-                               class="open-EditMemberDialog btn btn-info mr-1 float-right">
-                                <i class="fas fa-user-edit"></i> Edit
-                            </a>
+                                    <a href="/menu/movies?find=<%= mov.name %>"
+                                       class="list-group-item list-group-item-action"><%= mov.name %>
+                                        , <%= mov.date.substring(0, 10) %>
+                                    <a>
+
+                                    <% }) %>
+                                </div>
+                            <% } %>
                         </div>
+                        <% if(permissions.ds || permissions.us){ %>
+                            <div class="card-footer">
+                                <% if(permissions.ds){ %>
+                                    <!-- Button trigger deleteMovie modal -->
+                                    <a data-toggle="modal"
+                                       data-id="<%= m._id %>"
+                                       data-name="<%= m.name %>"
+                                       href="#deleteMemberModal"
+                                       class="open-DeleteMemberDialog btn btn-danger mr-1 float-right">
+                                        <i class="fas fa-user-times"></i> Delete
+                                    </a>
+                                <% } %>
+                                <% if(permissions.us){ %>
+                                    <!-- Button trigger edit modal -->
+                                    <a data-toggle="modal"
+                                       data-id="<%= m._id %>"
+                                       data-name="<%= m.name %>"
+                                       data-email="<%= m.email %>"
+                                       data-city="<%= m.city %>"
+                                       href="#editMemberModal"
+                                       class="open-EditMemberDialog btn btn-info mr-1 float-right">
+                                        <i class="fas fa-user-edit"></i> Edit
+                                    </a>
+                                <% } %>
+                            </div>
+                        <% } %>
                     </div>
                 </div>
             <% }) %>
@@ -158,7 +184,7 @@
                 <form action="/menu/subs/deleteMemberForm" method="POST">
                     <input type="hidden" name="id" id="id" value="id"/>
                     <input type="hidden" name="name" id="name" value="name"/>
-                    <button type="submit" id="delete" class="btn btn-block btn-danger">
+                    <button type="submit" id="deleteMember" class="btn btn-block btn-danger">
                         I understand the consequences, delete this member
                     </button>
                 </form>

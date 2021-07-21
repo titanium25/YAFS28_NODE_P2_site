@@ -1,26 +1,51 @@
 const restDAL = require('../DAL/restDAL');
 const jsonDAL = require('../DAL/jsonDAL');
 
-// File delete
+// File deleteMovie
 const fs = require('fs')
 
 exports.countMovies = async () => {
-    return (await restDAL.count()).data;
+    return (await restDAL.countMovies()).data;
 }
 
 exports.getMovieList = async (page, size, find) => {
-    const movies = await restDAL.getAll(page, size, find)
-    return await movies.data.map(movie => ({
+    const movies = await restDAL.getAllMovies(page, size, find);
+    const subs = await restDAL.getSubs();
+    // console.log(subs.data)
+    // console.log(movies.data._id.find(element))
+    let k = await movies.data.map(async movie => ({
         _id: movie._id,
         name: movie.name,
         genres: movie.genres,
         premiered: movie.premiered,
-        image: movie.image
+        image: movie.image,
+        subs: await findMovieNameById(movie._id)
     }));
+
+    return await Promise.all(k)
+}
+
+async function findMovieNameById(movieId) {
+    // let y = await restDAL.geMemberById('60d1d3a0d7ca945dfcaee91e')
+    // console.log(y.data)
+    const subs = await restDAL.getSubs();
+    const o = []
+    let z = subs.data.map((s) => s.movies.map(async (e) => {
+
+            // console.log(y.data.name)
+            if (e.movieId === movieId) {
+                // let y = await restDAL.geMemberById(s.memberId)
+                // console.log(y.data.name)
+                let obj = {name: s.memberId, date: e.date}
+                o.push(obj)
+            }
+        }
+    ))
+    return await Promise.all(o)
 }
 
 exports.addMovie = async (obj) => {
-    return await restDAL.add(obj);
+    return await restDAL.addMovie(obj);
 }
 
 exports.updateMovie = async (req) => {
@@ -31,13 +56,13 @@ exports.updateMovie = async (req) => {
         premiered: premiered,
         image: image
     }
-    await restDAL.update(movieId, obj)
+    await restDAL.updateMovies(movieId, obj)
     return `Movie "${title}" updated successfully`;
 }
 
 exports.deleteMovie = async (req) => {
     let msg = `Movie "${req.body.title}" deleted successfully`
-    if(!req.body.image.startsWith('https://')) {
+    if (!req.body.image.startsWith('https://')) {
         try {
             fs.unlinkSync('public' + req.body.image)
             //file removed
@@ -46,7 +71,7 @@ exports.deleteMovie = async (req) => {
             msg = err
         }
     }
-    await restDAL.delete(req.body.movieId);
+    await restDAL.deleteMovie(req.body.movieId);
     return msg;
 }
 

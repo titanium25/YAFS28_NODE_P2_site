@@ -78,7 +78,8 @@ router.post('/addUserForm', async function (req, res, next) {
         let success = []
         success.push({msg: `New user ${req.body.username} added successfully`})
         let userList = await usersBL.getAllUsers();
-        res.render('manageUsers', {userList, success, name: obj.username, admin: obj.isAdmin});
+        let permissions = await moviesBL.permissions(obj.sub);
+        res.render('manageUsers', {userList, success, name: obj.username, admin: obj.isAdmin, permissions});
     }
 
 });
@@ -132,7 +133,8 @@ router.post('/deleteUserForm', async function (req, res, next) {
     success.push({msg: `User ${user} deleted successfully`})
     let obj = utils.getPayloadFromToken(req)
     let userList = await usersBL.getAllUsers();
-    res.render('manageUsers', {userList, success, name: obj.username, admin: obj.isAdmin});
+    let permissions = await moviesBL.permissions(obj.sub);
+    res.render('manageUsers', {userList, success, name: obj.username, admin: obj.isAdmin, permissions});
 });
 
 function hasWhiteSpace(s) {

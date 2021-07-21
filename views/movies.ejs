@@ -9,7 +9,7 @@
         $(".modal-footer #image").val(image);
         $(".modal-body span").text(title);
 
-        document.getElementById("delete").disabled = true;
+        document.getElementById("deleteMovie").disabled = true;
 
         /* event listener */
         document.getElementsByName("confirm")[0].addEventListener('change', doThing);
@@ -18,7 +18,7 @@
         /* function */
         function doThing() {
             if (document.getElementsByName("confirm")[0].value === ('delete ' + title))
-                document.getElementById("delete").disabled = false;
+                document.getElementById("deleteMovie").disabled = false;
         }
     });
 
@@ -65,13 +65,14 @@
             <input class="form-control mr-sm-2 input-sm w-25 float-right" type="text" name="find"
                    placeholder="Find movie"
                    aria-label="Search">
-            <button class="btn btn-outline-primary float-right mr-4" type="submit">Search</button>
+            <button class="btn btn-outline-primary float-right mr-4" type="submit"><i class="fas fa-search"></i> Search
+            </button>
 
         </form>
         <% if(movies.length === 0) { %>
-        <div class="badge bg-primary text-wrap mt-3 " style="width: 15rem; align-content: center">
-            <h1>Nothing found</h1>
-        </div>
+            <div class="badge bg-primary text-wrap mt-3 " style="width: 15rem; align-content: center">
+                <h1>Nothing found</h1>
+            </div>
         <% } else { %>
             <% include ./partials/pagination.ejs %>
                 <div class="row row-cols-1 row-cols-md-2 g-4">
@@ -100,19 +101,23 @@
                                                 , <%= m.premiered.substring(0, 4) %></h5>
                                             <p class="card-text">Genres: <%= m.genres %></p>
 
-                                            <div class="card">
-                                                <div class="card-body">
-                                                    <h6 class="card-title">Subscriptions watched</h6>
-                                                    <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
+                                            <% if(m.subs.length > 0) { %>
+                                                <div class="card">
+                                                    <div class="card-header">
+                                                        Subscriptions watched
+                                                    </div>
+                                                    <div class="card-body">
 
-                                                    <a href="#" class="card-link">Card link</a>
-                                                    <a href="#" class="card-link">Another link</a>
+                                                        <% m.subs.forEach(function(s) { %>
+                                                            <%= s.name %> || <%= s.date.substring(0, 10) %>
+                                                        <% }) %>
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            <% } %>
 
                                         </div>
                                         <div class="card-footer">
-                                            <!-- Button trigger delete modal -->
+                                            <!-- Button trigger deleteMovie modal -->
                                             <% if(permissions.dm){ %>
                                                 <a data-toggle="modal"
                                                    data-id="<%= m._id %>"
@@ -143,7 +148,7 @@
                         </div>
                     <% }) %>
                 </div>
-            <% include ./partials/pagination.ejs %>
+                <% include ./partials/pagination.ejs %>
         <% } %>
     </div>
 </div>
@@ -176,7 +181,7 @@
                     <input type="hidden" name="movieId" id="movieId" value="movieId"/>
                     <input type="hidden" name="title" id="title" value="title"/>
                     <input type="hidden" name="image" id="image" value="image"/>
-                    <button type="submit" id="delete" class="btn btn-block btn-danger">
+                    <button type="submit" id="deleteMovie" class="btn btn-block btn-danger">
                         I understand the consequences, delete this movie
                     </button>
                 </form>

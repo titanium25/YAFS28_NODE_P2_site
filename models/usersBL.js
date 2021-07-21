@@ -129,7 +129,7 @@ exports.addUser = async function (req) {
         lastName,
         timeOut,
         created: new Date().toLocaleString('en-GB', options).replace(/T/, ' ').      // replace T with a space
-            replace(/\..+/, '')     // delete the dot and everything after
+            replace(/\..+/, '')     // deleteMovie the dot and everything after
     })
 
     // Create new Permissions in JSON

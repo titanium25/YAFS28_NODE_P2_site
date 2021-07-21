@@ -11,9 +11,12 @@ const subsBL = require('../models/subsBL');
 router.get('/', passport.authenticate('jwt', {session: false}), async function (req, res, next) {
     const obj = utils.getPayloadFromToken(req);
     const permissions = await moviesBL.permissions(obj.sub);
-    const members = await subsBL.getSubs();
+    const members = await subsBL.getAllMembers();
+    // console.log(members)
     const movies = await moviesBL.getMovieList(1, await moviesBL.countMovies(), '');
     const success_msg = req.query.valid || '';
+    // const subsMovies = await subsBL.getSubsMoviesByMemberId('60f4c4a375b35a6274494a61')
+    // console.log(subsMovies)
     res.render('subs', {
         members,
         movies,
@@ -22,6 +25,16 @@ router.get('/', passport.authenticate('jwt', {session: false}), async function (
         permissions,
         success_msg});
 });
+
+router.post('/addSubscription',async function (req, res, next) {
+    const {memberId, movieId, date} = req.body
+    const obj = {memberId, movieId, date}
+    console.log(obj)
+    await subsBL.addSub(obj)
+    res.redirect('/menu/subs/')
+});
+
+
 
 // Add member page
 router.get('/addMember', passport.authenticate('jwt', {session: false}), async function (req, res, next) {
@@ -152,7 +165,7 @@ router.post('/editMemberForm', async function (req, res, next) {
 
 
     if (errors.length > 0) {
-        const members = await subsBL.getSubs();
+        const members = await subsBL.getAllMembers();
         res.render('subs', {members, name: obj.username, admin: obj.isAdmin, permissions, errors});
     } else {
         const success_msg = await subsBL.updateSub(req)

@@ -2,37 +2,47 @@ const axios = require('axios')
 
 const movieURL = "http://localhost:2020/api/movies";
 const memberURL = "http://localhost:2020/api/members";
+const subsURL = "http://localhost:2020/api/subs";
 
-exports.getAll = (page, size, find) => {
+/**
+ * -------------- Movies ----------------
+ */
+
+
+exports.getAllMovies = (page, size, find) => {
     return axios.get(movieURL + '?page=' + page + '&size=' + size + '&find=' + find)
 }
 
-exports.count = () => {
+exports.countMovies = () => {
     return axios.get(movieURL + '/lib/count')
 }
 
-exports.update = (id, obj) => {
+exports.updateMovies = (id, obj) => {
     return axios.patch(movieURL + '/' + id, obj)
 }
 
-exports.getById = (id) => {
-    return axios.get(movieURL + '/' + id)
+exports.getMovieById = (id) => {
+    return axios.get(movieURL + '/get/' + id)
 }
 
-exports.add = (obj) => {
+exports.addMovie = (obj) => {
     return axios.post(movieURL, obj)
 }
 
-exports.delete = (id) => {
+exports.deleteMovie = (id) => {
     return axios.delete(movieURL + '/' + id)
 }
 
-/*
-/### Members
+/**
+ * -------------- Members ----------------
  */
 
 exports.getMembers = () => {
     return axios.get(memberURL)
+}
+
+exports.geMemberById = (id) => {
+    return axios.get(memberURL + '/get/' + id)
 }
 
 exports.deleteMember = (id) => {
@@ -45,4 +55,28 @@ exports.addMember = (obj) => {
 
 exports.updateMember = (id, obj) => {
     return axios.put(memberURL + '/' + id, obj)
+}
+
+/**
+ * -------------- Subs ----------------
+ */
+
+exports.getSubs = () => {
+    return axios.get(subsURL)
+}
+
+exports.addSubs = (obj) => {
+    return axios.post(subsURL, obj)
+}
+
+exports.getSubsMoviesByMemberId = (memberId) => {
+    return axios.get(subsURL + '/get/' + memberId)
+}
+
+exports.deleteSubs = (id) => {
+    return axios.delete(subsURL + '/' + id)
+}
+
+exports.updateSubs = (id, obj) => {
+    return axios.put(subsURL + '/' + id, obj)
 }
