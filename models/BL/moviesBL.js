@@ -54,29 +54,22 @@ exports.updateMovie = async (req) => {
 
 exports.deleteMovie = async (req) => {
     const movieId = req.body.movieId;
-    // const title = req.body.title;
+    const title = req.body.title;
     const subsArr = await restDAL.getSubs();
-    // let msg = `Movie "${title}" deleted successfully`
-    // if (!req.body.image.startsWith('https://')) {
-    //     try {
-    //         fs.unlinkSync('public' + req.body.image)
-    //         //file removed
-    //     } catch (err) {
-    //         console.error(err)
-    //         msg = err
-    //     }
-    // }
-    console.log(`Movie Hellsing  with Id ${movieId}`)
-    console.log(subsArr.data[1])
-    let t = subsArr.data.map((subs) => {
-            subs.movies.filter((obj) =>
-                obj.movieId !== movieId)
+    let msg = `Movie "${title}" deleted successfully`
+    if (!req.body.image.startsWith('https://')) {
+        try {
+            fs.unlinkSync('public' + req.body.image)
+            //file removed
+        } catch (err) {
+            console.error(err)
+            msg = err
         }
-     )
-    console.log(t.data)
-
-    // await restDAL.deleteMovie(movieId);
-    // return msg;
+    }
+    // Delete all objects that contains this movie id from the subs and update
+    await restDAL.updateSubs(movieId)
+    await restDAL.deleteMovie(movieId);
+    return msg;
 }
 
 // ToDo: Not belong in here

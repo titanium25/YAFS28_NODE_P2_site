@@ -69,6 +69,10 @@ exports.addSubs = (obj) => {
     return axios.post(subsURL, obj)
 }
 
+exports.updateSubs = (id) => {
+    return axios.put(subsURL + '/' + id)
+}
+
 exports.getSubsById = (memberId) => {
     return axios.get(subsURL + '/get/' + memberId)
 }
