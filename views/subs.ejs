@@ -1,11 +1,11 @@
 <script type="text/javascript">
 
     $(document).on("click", ".open-DeleteMemberDialog", function () {
-        let id = $(this).data('id');
-        let name = $(this).data('name');
-        $(".modal-footer #id").val(id);
-        $(".modal-footer #name").val(name);
-        $(".modal-body span").text(name);
+        let memberId = $(this).data('member-id');
+        let memberName = $(this).data('member-name');
+        $(".modal-footer #memberId").val(memberId);
+        $(".modal-footer #memberName").val(memberName);
+        $(".modal-body span").text(memberName);
 
         document.getElementById("deleteMember").disabled = true;
 
@@ -15,7 +15,7 @@
 
         /* function */
         function doThing() {
-            if (document.getElementsByName("confirm")[0].value === ('delete ' + name))
+            if (document.getElementsByName("confirm")[0].value === ('delete ' + memberName))
                 document.getElementById("deleteMember").disabled = false;
         }
     });
@@ -54,22 +54,22 @@
         <% } %>
 
         <div class="row row-cols-3 row-cols-md-3 g-3">
-            <% members.forEach(function(m) { %>
+            <% members.forEach(function(member) { %>
                 <div class="col">
                     <div class="card mt-2">
                         <div class="card-body">
-                            <strong>Name:</strong> <%= m.name %><br>
-                            <strong>Email:</strong> <%= m.email %><br>
-                            <strong>City:</strong> <%= m.city %><br>
+                            <strong>Name:</strong> <%= member.name %><br>
+                            <strong>Email:</strong> <%= member.email %><br>
+                            <strong>City:</strong> <%= member.city %><br>
 
                             <p>
                                 <button class="btn btn-primary btn-sm mt-2" type="button" data-toggle="collapse"
-                                        data-target="#<%= m.ui %>" aria-expanded="false"
+                                        data-target="#<%= member.ui %>" aria-expanded="false"
                                         aria-controls="collapseExample">
                                     Subscribe to new movie
                                 </button>
                             </p>
-                            <div class="collapse mt-2" id="<%= m.ui %>">
+                            <div class="collapse mt-2" id="<%= member.ui %>">
                                 <div class="card">
                                     <div class="card-header">
                                         <strong>Add a new movie</strong>
@@ -77,14 +77,14 @@
                                     <div class="card card-body">
 
                                         <form action="/menu/subs/addSubscription" method="POST">
-                                            <input type="hidden" name="memberId" value="<%= m._id %>">
+                                            <input type="hidden" name="memberId" value="<%= member._id %>">
                                             <div class="form-group">
                                                 <label for="name"><strong>Movie title</strong></label>
                                                 <select class="form-control form-select-sm p-2 w-100"
                                                         aria-label=".form-select-sm" name="movieId" id="name">
                                                     <option selected>Open this select menu</option>
-                                                    <% movies.forEach(function(mov) { %>
-                                                        <option value="<%= mov._id %>"><%= mov.name %></option>
+                                                    <% movies.forEach(function(movie) { %>
+                                                        <option value="<%= movie._id %>"><%= movie.name %></option>
                                                     <% }) %>
                                                 </select>
                                             </div>
@@ -108,14 +108,14 @@
                                 </div>
                             </div>
                             <br>
-                            <% if(m.movies) { %>
+                            <% if(member.movies) { %>
                                 <strong>Movies watched:</strong> <br> <br>
                                 <div class="list-group">
-                                    <% m.movies.forEach( function (mov) { %>
+                                    <% member.movies.forEach( function (movie) { %>
 
-                                    <a href="/menu/movies?find=<%= mov.name %>"
-                                       class="list-group-item list-group-item-action"><%= mov.name %>
-                                        , <%= mov.date.substring(0, 10) %>
+                                    <a href="/menu/movies?find=<%= movie.name %>"
+                                       class="list-group-item list-group-item-action"><%= movie.name %>
+                                        , <%= movie.date.substring(0, 10) %>
                                     <a>
 
                                     <% }) %>
@@ -125,10 +125,10 @@
                         <% if(permissions.ds || permissions.us){ %>
                             <div class="card-footer">
                                 <% if(permissions.ds){ %>
-                                    <!-- Button trigger deleteMovie modal -->
+                                    <!-- Button trigger deleteMember modal -->
                                     <a data-toggle="modal"
-                                       data-id="<%= m._id %>"
-                                       data-name="<%= m.name %>"
+                                       data-member-id="<%= member._id %>"
+                                       data-member-name="<%= member.name %>"
                                        href="#deleteMemberModal"
                                        class="open-DeleteMemberDialog btn btn-danger mr-1 float-right">
                                         <i class="fas fa-user-times"></i> Delete
@@ -137,10 +137,10 @@
                                 <% if(permissions.us){ %>
                                     <!-- Button trigger edit modal -->
                                     <a data-toggle="modal"
-                                       data-id="<%= m._id %>"
-                                       data-name="<%= m.name %>"
-                                       data-email="<%= m.email %>"
-                                       data-city="<%= m.city %>"
+                                       data-id="<%= member._id %>"
+                                       data-name="<%= member.name %>"
+                                       data-email="<%= member.email %>"
+                                       data-city="<%= member.city %>"
                                        href="#editMemberModal"
                                        class="open-EditMemberDialog btn btn-info mr-1 float-right">
                                         <i class="fas fa-user-edit"></i> Edit
@@ -171,7 +171,7 @@
             </div>
             <div class="modal-body">
                 <p>This action cannot be undone. This will permanently delete the <b><span/></b>,
-                    from the database. </p>
+                    from the database and all his subscriptions. </p>
                 <p>Please type <b>delete <span/></b> to confirm.</p>
                 <input
                         type="text"
@@ -182,8 +182,8 @@
             </div>
             <div class="modal-footer">
                 <form action="/menu/subs/deleteMemberForm" method="POST">
-                    <input type="hidden" name="id" id="id" value="id"/>
-                    <input type="hidden" name="name" id="name" value="name"/>
+                    <input type="hidden" name="memberId" id="memberId" value="memberId"/>
+                    <input type="hidden" name="memberName" id="memberName" value="memberName"/>
                     <button type="submit" id="deleteMember" class="btn btn-block btn-danger">
                         I understand the consequences, delete this member
                     </button>

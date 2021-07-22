@@ -1,12 +1,12 @@
 var express = require('express');
 var router = express.Router();
-const User = require('../models/userModel');
+const User = require('../models/dbModels/userModel');
 const passport = require('passport');
 
 const utils = require('../lib/utils');
-const usersBL = require('../models/usersBL')
+const usersBL = require('../models/BL/usersBL')
 const jsonDAL = require('../DAL/jsonDAL');
-const moviesBL = require('../models/moviesBL');
+const moviesBL = require('../models/BL/moviesBL');
 
 
 // Users Console

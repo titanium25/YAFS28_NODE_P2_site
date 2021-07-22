@@ -13,7 +13,7 @@ const flash = require('connect-flash');
 const loginController = require('./controllers/loginController');
 const movieController = require('./controllers/movieController');
 const userController = require('./controllers/userController');
-const subsController = require('./controllers/subController');
+const memberController = require('./controllers/memberController');
 
 /**
  * -------------- GENERAL SETUP ----------------
@@ -30,7 +30,7 @@ const app = express();
 require('./config/database');
 
 // Must first load the models
-require('./models/userModel');
+require('./models/dbModels/userModel');
 
 // Pass the global passport object into the configuration function
 require('./config/passport')(passport);
@@ -82,7 +82,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', loginController);
 app.use('/menu', movieController);
 app.use('/menu/manage', userController);
-app.use('/menu/subs', subsController);
+app.use('/menu/subs', memberController);
 
 
 /**

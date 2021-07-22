@@ -2,8 +2,8 @@ var express = require('express');
 var router = express.Router();
 
 const bcrypt = require('bcryptjs');
-const User = require('../models/userModel');
-const Token = require('../models/tokenModel');
+const User = require('../models/dbModels/userModel');
+const Token = require('../models/dbModels/tokenModel');
 
 const utils = require('../lib/utils');
 const jsonDAL = require('../DAL/jsonDAL');

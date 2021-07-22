@@ -1,5 +1,5 @@
-const restDAL = require('../DAL/restDAL');
-const jsonDAL = require('../DAL/jsonDAL');
+const restDAL = require('../../DAL/restDAL');
+const jsonDAL = require('../../DAL/jsonDAL');
 
 // File deleteMovie
 const fs = require('fs')
@@ -8,21 +8,20 @@ exports.countMovies = async () => {
     return (await restDAL.countMovies()).data;
 }
 
-exports.getMovieList = async (page, size, find) => {
-    const movies = await restDAL.getAllMovies(page, size, find);
-    let k = await movies.data.map(async movie => ({
+exports.getMovies = async (page, size, find) => {
+    const moviesArr = await restDAL.getMovies(page, size, find);
+    return await Promise.all(await moviesArr.data.map(async movie => ({
         _id: movie._id,
         name: movie.name,
         genres: movie.genres,
         premiered: movie.premiered,
         image: movie.image,
-        subs: await findMemberNameByMovieId(movie._id)
-    }));
+        subs: await findMembers(movie._id)
+    })));
 
-    return await Promise.all(k)
 }
 
-async function findMemberNameByMovieId(movieId) {
+async function findMembers(movieId) {
     const subsArr = await restDAL.getSubs();
     const membersArr = []
     await Promise.all(subsArr.data.map(async (subs) =>
@@ -54,18 +53,30 @@ exports.updateMovie = async (req) => {
 }
 
 exports.deleteMovie = async (req) => {
-    let msg = `Movie "${req.body.title}" deleted successfully`
-    if (!req.body.image.startsWith('https://')) {
-        try {
-            fs.unlinkSync('public' + req.body.image)
-            //file removed
-        } catch (err) {
-            console.error(err)
-            msg = err
+    const movieId = req.body.movieId;
+    // const title = req.body.title;
+    const subsArr = await restDAL.getSubs();
+    // let msg = `Movie "${title}" deleted successfully`
+    // if (!req.body.image.startsWith('https://')) {
+    //     try {
+    //         fs.unlinkSync('public' + req.body.image)
+    //         //file removed
+    //     } catch (err) {
+    //         console.error(err)
+    //         msg = err
+    //     }
+    // }
+    console.log(`Movie Hellsing  with Id ${movieId}`)
+    console.log(subsArr.data[1])
+    let t = subsArr.data.map((subs) => {
+            subs.movies.filter((obj) =>
+                obj.movieId !== movieId)
         }
-    }
-    await restDAL.deleteMovie(req.body.movieId);
-    return msg;
+     )
+    console.log(t.data)
+
+    // await restDAL.deleteMovie(movieId);
+    // return msg;
 }
 
 // ToDo: Not belong in here

@@ -9,7 +9,7 @@ const subsURL = "http://localhost:2020/api/subs";
  */
 
 
-exports.getAllMovies = (page, size, find) => {
+exports.getMovies = (page, size, find) => {
     return axios.get(movieURL + '?page=' + page + '&size=' + size + '&find=' + find)
 }
 
@@ -69,14 +69,10 @@ exports.addSubs = (obj) => {
     return axios.post(subsURL, obj)
 }
 
-exports.getSubsMoviesByMemberId = (memberId) => {
+exports.getSubsById = (memberId) => {
     return axios.get(subsURL + '/get/' + memberId)
 }
 
-exports.deleteSubs = (id) => {
-    return axios.delete(subsURL + '/' + id)
-}
-
-exports.updateSubs = (id, obj) => {
-    return axios.put(subsURL + '/' + id, obj)
+exports.deleteSubs = (memberId) => {
+    return axios.delete(subsURL + '/' + memberId)
 }

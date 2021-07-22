@@ -2,7 +2,8 @@ var express = require('express');
 var router = express.Router();
 const passport = require('passport');
 const utils = require('../lib/utils');
-const moviesBL = require('../models/moviesBL');
+const moviesBL = require('../models/BL/moviesBL');
+const subsBL = require('../models/BL/membersBL');
 // const upload = require('../lib/upload')
 
 // ToDo: Move to separate file
@@ -46,9 +47,8 @@ router.get('/movies', passport.authenticate('jwt', {session: false}), async func
     let size = parseInt(req.query.size) || 10;
     let find = req.query.find || '';
     const count = await moviesBL.countMovies();
-    const movies = await moviesBL.getMovieList(page, size, find);
-    console.log(movies[0].subs)
-    // movies.map((e) = > e.subs.)
+    const movies = await moviesBL.getMovies(page, size, find);
+    // console.log(movies[0].subs)
     let obj = utils.getPayloadFromToken(req);
     let permissions = await moviesBL.permissions(obj.sub);
     let success_msg = req.query.valid || '';
@@ -83,7 +83,7 @@ router.post('/addMovieForm', upload, async function (req, res, next) {
 
     // Movie title validation
     // Check if title is blank
-    if (title){
+    if (title) {
         // Check if title is too long
         if (title.length > 15) errors.push({msg: 'Title must be shorter than 15 charters'});
     } else {
@@ -94,7 +94,7 @@ router.post('/addMovieForm', upload, async function (req, res, next) {
     // Check if year is blank
     if (premiered) {
         // Check if premiered string contains numbers only
-        if (!isNaN(premiered)){
+        if (!isNaN(premiered)) {
             // Check if premiered year not 4 characters exactly
             if (premiered.length == 4) {
                 // Check if year is greater then actually date
@@ -117,7 +117,7 @@ router.post('/addMovieForm', upload, async function (req, res, next) {
     if (!req.file) errors.push({msg: 'No image uploaded'});
 
     // Check if no genres selected
-    if(!genres) errors.push({msg: 'Please choose one movie genre at least'});
+    if (!genres) errors.push({msg: 'Please choose one movie genre at least'});
 
     if (errors.length > 0) {
         res.render('addMovie', {name: obj.username, admin: obj.isAdmin, permissions, genreList, errors});

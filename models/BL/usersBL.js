@@ -1,7 +1,7 @@
-const User = require('../models/userModel');
-const Token = require('../models/tokenModel');
-const jsonDAL = require('../DAL/jsonDAL');
-const sendEmail = require("../lib/emailSender");
+const User = require('../dbModels/userModel');
+const Token = require('../dbModels/tokenModel');
+const jsonDAL = require('../../DAL/jsonDAL');
+const sendEmail = require("../../lib/emailSender");
 const crypto = require('crypto');
 
 exports.getAllUsers = async function () {
