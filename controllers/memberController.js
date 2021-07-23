@@ -9,15 +9,12 @@ const subsBL = require('../models/BL/subsBL');
 // Member page
 router.get('/', passport.authenticate('jwt', {session: false}), async function (req, res, next) {
     let find = req.query.find || '';
+    let success_msg = req.query.valid || '';
     const obj = utils.getPayloadFromToken(req);
     const permissions = await moviesBL.permissions(obj.sub);
     const members = await membersBL.getMembers(find);
-    const moviesDropDownList = await moviesBL.getMovies(1, await moviesBL.countMovies(), '');
-    const success_msg = req.query.valid || '';
-
     res.render('subs', {
         members,
-        movies: moviesDropDownList,
         name: obj.username,
         admin: obj.isAdmin,
         permissions,

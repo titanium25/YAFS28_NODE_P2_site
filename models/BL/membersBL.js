@@ -8,8 +8,9 @@ exports.getMembers = async (find) => {
     return await Promise.all(membersArr.data.map(async (member) => (
             {
                 ...member,
-                ui: utils.makeId(),
-                movies: await subsBL.getSubs(member._id)
+                ui: utils.makeId(), // unique id for front end show/hide window
+                movies: await subsBL.getSubs(member._id) || '', // load movies that member watched
+                dropDownList: await (await restDAL.dropDown(member._id)).data // load movies that member has not watched
             }
         )
     ))

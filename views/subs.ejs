@@ -83,7 +83,7 @@
                                                 <select class="form-control form-select-sm p-2 w-100"
                                                         aria-label=".form-select-sm" name="movieId" id="name">
                                                     <option selected>Open this select menu</option>
-                                                    <% movies.forEach(function(movie) { %>
+                                                    <% member.dropDownList.forEach(function(movie) { %>
                                                         <option value="<%= movie._id %>"><%= movie.name %></option>
                                                     <% }) %>
                                                 </select>

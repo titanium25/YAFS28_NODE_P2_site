@@ -17,6 +17,10 @@ exports.countMovies = () => {
     return axios.get(movieURL + '/lib/count')
 }
 
+exports.dropDown = (memberId) => {
+    return axios.get(movieURL + '/dropDown/' + memberId)
+}
+
 exports.updateMovies = (id, obj) => {
     return axios.patch(movieURL + '/' + id, obj)
 }
