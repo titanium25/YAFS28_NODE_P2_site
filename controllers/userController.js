@@ -71,7 +71,8 @@ router.post('/addUserForm', async function (req, res, next) {
     }
 
     if (errors.length > 0) {
-        res.render('addUser', {errors, name: obj.username, admin: obj.isAdmin})
+        let permissions = await moviesBL.permissions(obj.sub);
+        res.render('addUser', {errors, name: obj.username, admin: obj.isAdmin, permissions})
     } else {
         await usersBL.addUser(req);
         let success = []
