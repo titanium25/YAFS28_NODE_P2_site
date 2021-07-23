@@ -22,7 +22,7 @@ exports.dropDown = (memberId) => {
 }
 
 exports.updateMovies = (id, obj) => {
-    return axios.patch(movieURL + '/' + id, obj)
+    return axios.put(movieURL + '/' + id, obj)
 }
 
 exports.getMovieById = (id) => {

@@ -3,10 +3,7 @@ var router = express.Router();
 const passport = require('passport');
 const utils = require('../lib/utils');
 const moviesBL = require('../models/BL/moviesBL');
-const subsBL = require('../models/BL/membersBL');
-// const upload = require('../lib/upload')
 
-// ToDo: Move to separate file
 const uuid = require('uuid')
 const multer = require('multer')
 const DIR = './public/img/uploads';
@@ -85,7 +82,7 @@ router.post('/addMovieForm', upload, async function (req, res, next) {
     // Check if title is blank
     if (title) {
         // Check if title is too long
-        if (title.length > 15) errors.push({msg: 'Title must be shorter than 15 charters'});
+        if (title.length > 30) errors.push({msg: 'Title must be shorter than 30 charters'});
     } else {
         errors.push({msg: 'Please fill in movie title'});
     }
@@ -136,16 +133,68 @@ router.post('/addMovieForm', upload, async function (req, res, next) {
 });
 
 // Delete movie handler
-router.post('/deleteMovieForm', passport.authenticate('jwt', {session: false}), async function (req, res, next) {
+router.post('/deleteMovieForm', async function (req, res, next) {
     const success_msg = await moviesBL.deleteMovie(req)
     res.redirect('/menu/movies/?valid=' + success_msg);
 });
 
 // Edit movie handler
 // ToDo: execute validation
-router.post('/editMovieForm', passport.authenticate('jwt', {session: false}), async function (req, res, next) {
-    const success_msg = await moviesBL.updateMovie(req)
-    res.redirect('/menu/movies/?valid=' + success_msg)
+router.post('/editMovieForm', async function (req, res, next) {
+    const obj = utils.getPayloadFromToken(req);
+    const permissions = await moviesBL.permissions(obj.sub);
+    let errors = []
+    const {title, premiered} = req.body;
+
+    // Movie title validation
+    // Check if title is blank
+    if (title) {
+        // Check if title is too long
+        if (title.length > 30) errors.push({msg: 'Title must be shorter than 30 charters'});
+    } else {
+        errors.push({msg: 'Please fill in movie title'});
+    }
+
+    // Movie year validation
+    // Check if year is blank
+    if (premiered) {
+        // Check if premiered string contains numbers only
+        if (!isNaN(premiered)) {
+            // Check if premiered year not 4 characters exactly
+            if (premiered.length == 4) {
+                // Check if year is greater then actually date
+                if (+premiered > new Date().getFullYear()) errors.push({msg: `Movie year cant be greater then ${new Date().getFullYear()}`});
+                // Check if year is too old
+                if (+premiered < 1900) errors.push({msg: `Movie year cant be smaller then 1900`});
+                // Check if inputs got white spaces
+                if (utils.hasWhiteSpace(premiered)) errors.push({msg: 'Please dont use white spaces in premiered field'});
+            } else {
+                errors.push({msg: 'Premiered year must be 4 digits'});
+            }
+        } else {
+            errors.push({msg: 'Please type in year field numbers only'});
+        }
+    } else {
+        errors.push({msg: 'Please fill in movie year'});
+    }
+
+    if (errors.length > 0) {
+        const count = await moviesBL.countMovies();
+        const movies = await moviesBL.getMovies(1, 10);
+        res.render('movies', {
+            movies,
+            current: 1,
+            pages: Math.ceil(count / 10),
+            name: obj.username,
+            admin: obj.isAdmin,
+            permissions,
+            errors
+        });
+    } else {
+        const success_msg = await moviesBL.updateMovie(req)
+        res.redirect('/menu/movies/?valid=' + success_msg)
+    }
+
 });
 
 // Logout Handle
