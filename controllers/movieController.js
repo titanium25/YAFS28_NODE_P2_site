@@ -139,7 +139,6 @@ router.post('/deleteMovieForm', async function (req, res, next) {
 });
 
 // Edit movie handler
-// ToDo: execute validation
 router.post('/editMovieForm', async function (req, res, next) {
     const obj = utils.getPayloadFromToken(req);
     const permissions = await moviesBL.permissions(obj.sub);
@@ -198,7 +197,6 @@ router.post('/editMovieForm', async function (req, res, next) {
 });
 
 // Logout Handle
-// ToDo: not belong in here
 router.get('/logout', function (req, res, next) {
     // There is no way to destroy JWT token.
     // To logout you need to expired cookie manually

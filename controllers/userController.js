@@ -5,7 +5,6 @@ const passport = require('passport');
 
 const utils = require('../lib/utils');
 const usersBL = require('../models/BL/usersBL')
-const jsonDAL = require('../DAL/jsonDAL');
 const moviesBL = require('../models/BL/moviesBL');
 
 

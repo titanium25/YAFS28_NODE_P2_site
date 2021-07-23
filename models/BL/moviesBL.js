@@ -72,7 +72,6 @@ exports.deleteMovie = async (req) => {
     return msg;
 }
 
-// ToDo: Not belong in here
 exports.permissions = async (id) => {
     let permissionsJSON = await jsonDAL.getPermissions();
     let permissionsDataArr = permissionsJSON.permissionsData;
