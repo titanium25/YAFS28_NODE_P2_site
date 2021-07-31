@@ -1,4 +1,3 @@
-
 <div class="row mt-5 justify-content-md-center">
     <div class="card-body">
 
@@ -6,10 +5,14 @@
             Menu
         </h1>
         <div class="col-md-12 text-center">
-        <a href="/menu/movies" class="btn mr-1">Movies</a>
-        <a href="/menu/subs" class="btn mr-1">Subscriptions</a>
+            <% if(permissions.vm){ %>
+                <a href="/menu/movies" class="btn mr-1">Movies</a>
+            <% } %>
+            <% if(permissions.vs){ %>
+                <a href="/menu/subs" class="btn mr-1">Subscriptions</a>
+            <% } %>
             <% if(admin) { %>
-        <a href="/menu/manage" class="btn mr-1">Users Management Console</a>
+                <a href="/menu/manage" class="btn mr-1">Users Management Console</a>
             <% } %>
         </div>
     </div>

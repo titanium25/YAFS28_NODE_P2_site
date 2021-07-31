@@ -30,6 +30,7 @@ router.post('/addUserForm', async function (req, res, next) {
     let obj = utils.getPayloadFromToken(req)
     let errors = []
 
+    console.log(req.body.vm)
 
     // Check required fields not blank
     if (!firstName || !lastName || !username || !timeOut || !email) {

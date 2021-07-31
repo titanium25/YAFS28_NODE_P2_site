@@ -6,69 +6,6 @@
       "lastName": "Laz_test",
       "timeOut": "5138",
       "created": "10/07/2021, 03:45:03"
-    },
-    {
-      "id": "60ea257d08a6635080b9a9f3",
-      "firstName": "Alexander",
-      "lastName": "Lazarovich",
-      "timeOut": "70",
-      "created": "11/07/2021, 01:55:57"
-    },
-    {
-      "id": "60fae862c0d79359dc36aa95",
-      "firstName": "Alexander",
-      "lastName": "Lazarovich",
-      "timeOut": "5000",
-      "created": "23/07/2021, 19:03:46"
-    },
-    {
-      "id": "60fae90c584b946ccc3c03b3",
-      "firstName": "Alexander",
-      "lastName": "Lazarovich",
-      "timeOut": "5000",
-      "created": "23/07/2021, 19:06:36"
-    },
-    {
-      "id": "60fae9f23d38716da4f3486a",
-      "firstName": "Alexander",
-      "lastName": "Lazarovich",
-      "timeOut": "5000",
-      "created": "23/07/2021, 19:10:26"
-    },
-    {
-      "id": "60faea410b1359271c68b650",
-      "firstName": "Alexander",
-      "lastName": "Lazarovich",
-      "timeOut": "5000",
-      "created": "23/07/2021, 19:11:45"
-    },
-    {
-      "id": "60faea7307886b2268c79e5f",
-      "firstName": "Alexander",
-      "lastName": "Lazarovich",
-      "timeOut": "5000",
-      "created": "23/07/2021, 19:12:35"
-    },
-    {
-      "id": "60faeab4f2653d0f7ca8c093",
-      "firstName": "Alexander",
-      "lastName": "Lazarovich",
-      "timeOut": "5000",
-      "created": "23/07/2021, 19:13:40"
-    },
-    {
-      "id": "60faeb5dbd79c368b4c85e65",
-      "firstName": "Alexander",
-      "lastName": "Lazarovich",
-      "timeOut": "5000",
-      "created": "23/07/2021, 19:16:29"
-    },
-    {
-      "id": "60faecd70ea8cf3e10113d61",
-      "firstName": "Alexander",
-      "lastName": "Lazarovich",
-      "timeOut": "5000",
-      "created": "23/07/2021, 19:22:47"
     }
   ]
 }
