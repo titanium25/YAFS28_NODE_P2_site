@@ -94,7 +94,7 @@ app.use('/menu/subs', memberController);
 
 
 
-const server = app.listen(80, function() {
+const server = app.listen(8080, function() {
   console.log('Ready on port %d', server.address().port);
 });
 
