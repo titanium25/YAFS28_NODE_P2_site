@@ -101,16 +101,6 @@ exports.addUser = async function (req) {
         vs, cs, ds, us, vm, cm, dm, um
     } = req.body;
 
-    // console.log(firstName)
-    // console.log(lastName)
-    // console.log(username)
-    // console.log(timeOut)
-    // console.log(isAdmin)
-    // console.log(email)
-    // console.log(vs)
-    // console.log(vm)
-
-
     // Init. users array
     let usersJSON = await jsonDAL.getUsers();
     let permissionsJSON = await jsonDAL.getPermissions()
