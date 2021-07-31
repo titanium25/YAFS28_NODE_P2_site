@@ -15,6 +15,9 @@ const movieController = require('./controllers/movieController');
 const userController = require('./controllers/userController');
 const memberController = require('./controllers/memberController');
 
+
+
+
 /**
  * -------------- GENERAL SETUP ----------------
  */
@@ -90,22 +93,11 @@ app.use('/menu/subs', memberController);
  */
 
 
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
+
+const server = app.listen(80, function() {
+  console.log('Ready on port %d', server.address().port);
 });
 
-// error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
-});
-
-app.listen(80);
 
 module.exports = app;
