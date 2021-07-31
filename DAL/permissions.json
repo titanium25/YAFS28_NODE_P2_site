@@ -10,17 +10,6 @@
       "cm": true,
       "dm": true,
       "um": true
-    },
-    {
-      "id": "610548902f83053e38d50358",
-      "vs": true,
-      "cs": false,
-      "ds": false,
-      "us": false,
-      "vm": true,
-      "cm": false,
-      "dm": false,
-      "um": false
     }
   ]
 }
