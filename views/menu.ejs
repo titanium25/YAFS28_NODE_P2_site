@@ -4,15 +4,15 @@
         <h1 class="text-center mb-3">
             Menu
         </h1>
-        <div class="col-md-12 text-center">
+        <div class="col-md text-center">
             <% if(permissions.vm){ %>
-                <a href="/menu/movies" class="btn mr-1">Movies</a>
+                <a href="/menu/movies" class="btn my-2 mx-2">Movies</a>
             <% } %>
             <% if(permissions.vs){ %>
-                <a href="/menu/subs" class="btn mr-1">Subscriptions</a>
+                <a href="/menu/subs" class="btn my-2 mx-2">Subscriptions</a>
             <% } %>
             <% if(admin) { %>
-                <a href="/menu/manage" class="btn mr-1">Users Management Console</a>
+                <a href="/menu/manage" class="btn my-2 mx-2">Users Management Console</a>
             <% } %>
         </div>
     </div>
